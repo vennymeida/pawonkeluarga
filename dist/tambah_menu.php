@@ -1,31 +1,34 @@
 <?php
 require 'function.php';
-
-// Cek apakah tombol Simpan telah ditekan
 $queryKategori = "SELECT * FROM kategori_menu";
 $resultKategori = $conn->query($queryKategori);
 
 if (isset($_POST['simpan_data'])) {
-    $kategori = $_POST['id_kategori_menu']; 
+    $kategori = $_POST['kategori']; 
     $nama_menu = $_POST['nama_menu'];
     $harga = $_POST['harga'];
-    $foto = $_POST['foto'];
+    if (isset($_FILES['foto'])) {
+        $foto = $_FILES['foto']['name'];
+        $target_dir = "assets/img"; 
+        $target_file = $target_dir . basename($foto);
 
-    // Proses penyimpanan gambar
-  $foto = $_FILES['foto']['tmp_name'];
-  $fotoData = addslashes(file_get_contents($foto));
-    // Proses tambah data menu ke database
-    $tambah = $conn->query("INSERT INTO menu (id_kategori_menu, nama_menu, harga, foto) VALUES ('$kategori','$nama_menu', '$harga', '$foto')");
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
+            $tambah = $conn->query("INSERT INTO menu (id_kategori_menu, nama_menu, harga, foto) VALUES ('$kategori','$nama_menu', '$harga', '$target_file')");
 
-    if ($tambah) {
-        // Data berhasil ditambahkan, lakukan redirect ke halaman list_menu.php
-        header("Location: list_menu.php");
-        exit;
+            if ($tambah) {
+                header("Location: list_menu.php");
+                exit;
+            } else {
+                $error = "Terjadi kesalahan saat menambahkan data. Silakan coba lagi.";
+            }
+        } else {
+            $error = "Gagal meng-upload foto.";
+        }
     } else {
-        // Terjadi kesalahan saat menambahkan data, tampilkan pesan error
-        $error = "Terjadi kesalahan saat menambahkan data. Silakan coba lagi.";
+        $error = "Foto is required.";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -60,9 +63,6 @@ if (isset($_POST['simpan_data'])) {
 <!-- /END GA --></head>
 <body>
   <div id="app">
-    <!-- Bagian header dan sidebar -->
-
-    <!-- Main Content -->
     <div class="main-content">
       <section class="section">
         <div class="section-body">
@@ -70,7 +70,7 @@ if (isset($_POST['simpan_data'])) {
             <div class="col-6">
               <div class="card">
                <div class="card-body d-flex justify-content-center">
-                <form method="POST" action="">
+                <form method="POST" action="" enctype="multipart/form-data">
                     <div class="text-center">
                     <h1>Tambah Menu</h1>
                     <div class="form-group">
@@ -96,7 +96,6 @@ if (isset($_POST['simpan_data'])) {
                 <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
                 <a href="list_menu.php" class="btn btn-secondary">Batal</a>
               </form>
-
               <?php if (isset($error)) { ?>
                 <div class="alert alert-danger mt-3"><?php echo $error; ?></div>
               <?php } ?>

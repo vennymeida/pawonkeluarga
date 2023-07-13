@@ -65,7 +65,7 @@ if (isset($_GET['hapus'])) {
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Pawon Keluarga</div>
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item has-icon text-danger">
+              <a href="logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -75,15 +75,15 @@ if (isset($_GET['hapus'])) {
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.php">Pawon Keluarga</a>
+            <a href="dashboard.php">Pawon Keluarga</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.php">St</a>
+            <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
               <li class="dropdown">
-              <a href="index.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
@@ -136,23 +136,26 @@ if (isset($_GET['hapus'])) {
                       <table class="table table-bordered table-md">
                         <tr>
                           <th>#</th>
-                          <th>ID Kategori</th>
+                          <th>Nama Kategori</th>
                           <th>Nama Menu</th>
                           <th>Harga</th>
                           <th>Foto</th>
                           <th>Action</th>
                         </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM menu");
+                        <?php $ambil = $conn->query("SELECT * FROM menu JOIN kategori_menu ON menu.id_kategori_menu=kategori_menu.id_kategori_menu");
                         $nomorUrut = 1;?>
                         <?php while($pecah = $ambil->fetch_assoc()){?>
                         <tr>
                           <td><?php echo $nomorUrut; ?></td>
-                          <td><?php echo $pecah['id_kategori_menu'] ?></td>
+                          <td><?php echo $pecah['nama_kategori'] ?></td>
                           <td><?php echo $pecah['nama_menu']; ?></td>
                           <td><?php echo $pecah['harga']; ?></td>
-                          <td><?php echo $pecah['foto']; ?></td>
-                          <td><a href="tambah_menu.php" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_menu']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
+                          <td><img src="<?php echo $pecah['foto']; ?>" alt="" style="width: 100px; height: 100px;"></td>
+                          <td>
+                          <a href="detail_menu.php?id=<?php echo $pecah['id_menu']; ?>" class="btn btn-info" >Detail</a>
+                          <a href="edit_menu.php?id=<?php echo $pecah['id_menu']; ?>" class="btn btn-warning" >Edit</a>
+                          <a href="?hapus=<?php echo $pecah['id_menu']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
+                        </td>
                         </tr>
                         <?php 
                       $nomorUrut++;

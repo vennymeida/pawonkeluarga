@@ -1,5 +1,20 @@
 <?php
 require 'function.php';
+
+if (isset($_GET['hapus'])) {
+  $idPembayaran = $_GET['hapus'];
+  
+  $hapus = $conn->query("DELETE FROM pembayaran WHERE id_pembayaran = $idPembayaran");
+  
+  if ($hapus) {
+      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
+      header("Location: pembayaran.php");
+      exit;
+  } else {
+      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +65,7 @@ require 'function.php';
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Pawon Keluarga</div>
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item has-icon text-danger">
+              <a href="logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -60,15 +75,15 @@ require 'function.php';
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.php">Pawon Keluarga</a>
+            <a href="dashboard.php">Pawon Keluarga</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.php">St</a>
+            <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
               <li class="dropdown">
-              <a href="index.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
@@ -112,31 +127,35 @@ require 'function.php';
             <div class="row">
               <div class="Col-12 col-md-12 col-lg-12">
                 <div class="card">
-                  <div class="card-header">
+                  <div class="card-header d-flex justify-content-between">
                     <h4>List Pembayaran</h4>
+                    <a href="tambah_pembayaran.php" class="btn btn-primary">Tambah Data</a>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-bordered table-md">
                         <tr>
                           <th>#</th>
-                          <th>ID Pembelian</th>
+                          <th>Nama Pelanggan</th>
+                          <th>Tanggal Pembelian</th>
                           <th>Total Pembayaran</th>
                           <th>Metode Pembayaran</th>
                           <th>Tanggal Pembayaran</th>
                           <th>Action</th>
                         </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM pembayaran");
+                        <?php $ambil = $conn->query("SELECT * FROM pembayaran JOIN pembelian ON pembayaran.id_pembelian=pembelian.id_pembelian
+                        JOIN pelanggan ON pembelian.id_pelanggan = pelanggan.id_pelanggan");
                         $nomorUrut = 1;?>
                         <?php while($pecah = $ambil->fetch_assoc()){?>
                         <tr>
                           <td><?php echo $nomorUrut; ?></td>
-                          <td><?php echo $pecah['id_pembelian']; ?></td>
+                          <td><?php echo $pecah['nama_pelanggan']; ?></td>
+                          <td><?php echo $pecah['tanggal_pembelian']; ?></td>
                           <td><?php echo $pecah['total_pembayaran']; ?></td>
                           <td><?php echo $pecah['metode_pembayaran']; ?></td>
                           <td><?php echo $pecah['tanggal_pembayaran']; ?></td>
-                          <td><a href="#" class="btn btn-warning">Edit</a>
-                          <a href="#" class="btn-danger btn">Hapus</a></td>
+                          <td><a href="edit_pembayaran.php?id=<?php echo $pecah['id_pembayaran']; ?>" class="btn btn-warning">Edit</a>
+                          <a href="?hapus=<?php echo $pecah['id_pembayaran']; ?>" class="btn-danger btn">Hapus</a></td>
                         </tr>
                         <?php 
                         $nomorUrut++;

@@ -1,5 +1,20 @@
 <?php
 require 'function.php';
+
+if (isset($_GET['hapus'])) {
+  $idPembelian = $_GET['hapus'];
+  
+  $hapus = $conn->query("DELETE FROM pembelian WHERE id_pembelian = $idPembelian");
+  
+  if ($hapus) {
+      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
+      header("Location: list_pembelian.php");
+      exit;
+  } else {
+      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +65,7 @@ require 'function.php';
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Pawon Keluarga</div>
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item has-icon text-danger">
+              <a href="logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -60,19 +75,19 @@ require 'function.php';
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.php">Pawon Keluarga</a>
+            <a href="dashboard.php">Pawon Keluarga</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.php">St</a>
+            <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
               <li class="dropdown">
-              <a href="index.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
-              <a href="#" class="nav-link has-dropdown"><i class="far fa-user"></i> <span>User</span></a>
+              <a href="#" class="nav-link has-dr  opdown"><i class="far fa-user"></i> <span>User</span></a>
               <ul class="dropdown-menu">
               <li><a href="table_pelanggan.php">Data Pelanggan</a></li>
               <li><a href="table_admin.php">Data Admin</a></li>  
@@ -112,31 +127,32 @@ require 'function.php';
             <div class="row">
               <div class="Col-12 col-md-12 col-lg-12">
                 <div class="card">
-                  <div class="card-header">
+                  <div class="card-header d-flex justify-content-between">
                     <h4>List Pembelian</h4>
+                    <a href="tambah_pembelian.php" class="btn btn-primary">Tambah Data</a>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-bordered table-md">
                         <tr>
                           <th>#</th>
-                          <th>ID Pelanggan</th>
+                          <th>Nama Pelanggan</th>
                           <th>Tanggal Pembelian</th>
                           <th>Total Pembelian</th>
                           <th>Action</th>
                         </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM pembelian");
+                        <?php $ambil = $conn->query("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan");
                         $nomorUrut = 1;
                         ?>
                         <?php while($pecah = $ambil->fetch_assoc()){?>
                         <tr>
                           <td><?php echo $nomorUrut;?></td>
-                          <td><?php echo $pecah['id_pelanggan']; ?></td>
+                          <td><?php echo $pecah['nama_pelanggan']; ?></td>
                           <td><?php echo $pecah['tanggal_pembelian']; ?></td>
                           <td><?php echo $pecah['total_pembelian']; ?></td>
-                          <td><a href="#" class="btn btn-secondary">Detail</a>
-                          <a href="#" class="btn btn-warning">Edit</a>
-                          <a href="#" class="btn-danger btn">Hapus</a></td>
+                          <td>
+                          <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
+                          <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn">Hapus</a></td>
                         </tr>
                         <?php 
                          $nomorUrut++;

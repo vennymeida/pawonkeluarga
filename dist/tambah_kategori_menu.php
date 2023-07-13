@@ -1,37 +1,23 @@
 <?php
 require 'function.php';
 
-// Mendapatkan ID pelanggan dari parameter URL
-$idPelanggan = $_GET['id'];
-
-// Mendapatkan data pelanggan berdasarkan ID
-$ambil = $conn->query("SELECT * FROM pelanggan WHERE id_pelanggan = $idPelanggan");
-$dataPelanggan = $ambil->fetch_assoc();
-
-// Tombol Simpan ditekan
+// Cek apakah tombol Simpan telah ditekan
 if (isset($_POST['simpan_data'])) {
-    // Mendapatkan data yang diinputkan
-    $namaPelanggan = $_POST['nama_pelanggan'];
-    $noTelepon = $_POST['no_telepon'];
-    $alamat = $_POST['alamat'];
-
-    // Proses update data pelanggan ke database
-    $update = $conn->query("UPDATE pelanggan SET
-                            nama_pelanggan = '$namaPelanggan',
-                            no_telepon = '$noTelepon',
-                            alamat = '$alamat'
-                            WHERE id_pelanggan = $idPelanggan");
-
-    if ($update) {
-        // Data berhasil diupdate, lakukan redirect atau tampilkan pesan sukses
-        header("Location: table_pelanggan.php");
+    $namaKategori = $_POST['nama_kategori'];
+    $deskripsi = $_POST['deskripsi'];
+    
+    // Proses tambah data admin ke database
+    $tambah = $conn->query("INSERT INTO kategori_menu (nama_kategori, deskripsi) VALUES ('$namaKategori', '$deskripsi')");
+    
+    if ($tambah) {
+        // Data berhasil ditambahkan, lakukan redirect ke halaman table_admin.php
+        header("Location: kategori_menu.php");
         exit;
     } else {
-        // Terjadi kesalahan saat update data, tampilkan pesan error
-        $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi.";
+        // Terjadi kesalahan saat menambahkan data, tampilkan pesan error
+        $error = "Terjadi kesalahan saat menambahkan data. Silakan coba lagi.";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -71,36 +57,30 @@ if (isset($_POST['simpan_data'])) {
     <!-- Main Content -->
     <div class="main-content">
       <section class="section">
-        <div class="section-header">
-          <h1>Edit Pelanggan</h1>
-        </div>
         <div class="section-body">
           <div class="row">
             <div class="col-6">
               <div class="card">
-                <div class="card-body">
-                  <form method="POST" action="">
-                    <div class="form-group">
-                      <label for="nama_pelanggan">Nama Pelanggan</label>
-                      <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" value="<?php echo $dataPelanggan['nama_pelanggan']; ?>" required>
+               <div class="card-body d-flex justify-content-center">
+                <form method="POST" action="">
+                    <div class="text-center">
+                    <h1>Tambah Kategori Menu</h1>
                     </div>
-                    <div class="form-group">
-                      <label for="no_telepon">No Telepon</label>
-                      <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="<?php echo $dataPelanggan['no_telepon']; ?>" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="alamat">Alamat</label>
-                      <textarea class="form-control" id="alamat" name="alamat" rows="3" required><?php echo $dataPelanggan['alamat']; ?></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
-                    <a href="table_pelanggan.php" class="btn btn-secondary">Batal</a>
-                  </form>
-
-                  <?php if (isset($error)) { ?>
-                    <div class="alert alert-danger mt-3"><?php echo $error; ?></div>
-                  <?php } ?>
+                <div class="form-group">
+                  <label for="nama_kategori">Nama Kategori</label>
+                  <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" required>
                 </div>
-              </div>
+                <div class="form-group">
+                  <label for="deskripsi">Deskripsi</label>
+                  <textarea class="form-control" id="deskripsi" name="deskripsi" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
+                <a href="kategori_menu.php" class="btn btn-secondary">Batal</a>
+              </form>
+
+              <?php if (isset($error)) { ?>
+                <div class="alert alert-danger mt-3"><?php echo $error; ?></div>
+              <?php } ?>
             </div>
           </div>
         </div>

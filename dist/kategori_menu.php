@@ -1,5 +1,21 @@
 <?php
 require 'function.php';
+
+if (isset($_GET['hapus'])) {
+  $idKategori = $_GET['hapus'];
+  
+  // Proses hapus data pelanggan dari database
+  $hapus = $conn->query("DELETE FROM kategori_menu WHERE id_kategori_menu = $idKategori");
+  
+  if ($hapus) {
+      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
+      header("Location: kategori_menu.php");
+      exit;
+  } else {
+      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +66,7 @@ require 'function.php';
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Pawon Keluarga</div>
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item has-icon text-danger">
+              <a href="logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -60,15 +76,15 @@ require 'function.php';
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.php">Pawon Keluarga</a>
+            <a href="dashboard.php">Pawon Keluarga</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.php">St</a>
+            <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
               <li class="dropdown">
-              <a href="index.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
@@ -114,7 +130,7 @@ require 'function.php';
                 <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <h4>Kategori Menu Makanan</h4>
-                    <a href="tambah_pelanggan.php" class="btn btn-primary">Tambah Data</a>
+                    <a href="tambah_kategori_menu.php" class="btn btn-primary">Tambah Data</a>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
@@ -133,8 +149,8 @@ require 'function.php';
                           <td><?php echo $nomorUrut;?></td>
                           <td><?php echo $pecah['nama_kategori']; ?></td>
                           <td><?php echo $pecah['deskripsi']; ?></td>
-                          <td><a href="#" class="btn btn-warning">Edit</a>
-                          <a href="#" class="btn-danger btn">Hapus</a></td>
+                          <td><a href="edit_kategori_menu.php?id=<?php echo $pecah['id_kategori_menu']; ?>" class="btn btn-warning">Edit</a>
+                          <a href="?hapus=<?php echo $pecah['id_kategori_menu']; ?>" class="btn-danger btn">Hapus</a></td>
                         </tr>
                         <?php 
                          $nomorUrut++;
@@ -142,6 +158,11 @@ require 'function.php';
                       </table>
                     </div>
                   </div>
+                  <?php if (isset($error)) { ?>
+                  <div class="card-footer">
+                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                  </div>
+                <?php } ?>
                   <div class="card-footer text-right">
                     <nav class="d-inline-block">
                       <ul class="pagination mb-0">

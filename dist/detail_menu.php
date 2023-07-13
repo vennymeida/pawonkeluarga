@@ -1,37 +1,24 @@
 <?php
 require 'function.php';
 
-// Mendapatkan ID pelanggan dari parameter URL
-$idPelanggan = $_GET['id'];
+if (isset($_GET['id'])) {
+    $id_menu = $_GET['id'];
+    
+    // Fetch menu data from the database
+    $queryMenu = "SELECT * FROM menu WHERE id_menu = '$id_menu'";
+    $resultMenu = $conn->query($queryMenu);
+    $menuData = $resultMenu->fetch_assoc();
 
-// Mendapatkan data pelanggan berdasarkan ID
-$ambil = $conn->query("SELECT * FROM pelanggan WHERE id_pelanggan = $idPelanggan");
-$dataPelanggan = $ambil->fetch_assoc();
-
-// Tombol Simpan ditekan
-if (isset($_POST['simpan_data'])) {
-    // Mendapatkan data yang diinputkan
-    $namaPelanggan = $_POST['nama_pelanggan'];
-    $noTelepon = $_POST['no_telepon'];
-    $alamat = $_POST['alamat'];
-
-    // Proses update data pelanggan ke database
-    $update = $conn->query("UPDATE pelanggan SET
-                            nama_pelanggan = '$namaPelanggan',
-                            no_telepon = '$noTelepon',
-                            alamat = '$alamat'
-                            WHERE id_pelanggan = $idPelanggan");
-
-    if ($update) {
-        // Data berhasil diupdate, lakukan redirect atau tampilkan pesan sukses
-        header("Location: table_pelanggan.php");
+    if (!$menuData) {
+        // Menu with the specified ID doesn't exist
+        header("Location: list_menu.php");
         exit;
-    } else {
-        // Terjadi kesalahan saat update data, tampilkan pesan error
-        $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi.";
     }
+} else {
+    // No menu ID specified
+    header("Location: list_menu.php");
+    exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -66,41 +53,35 @@ if (isset($_POST['simpan_data'])) {
 <!-- /END GA --></head>
 <body>
   <div id="app">
-    <!-- Bagian header dan sidebar -->
-
-    <!-- Main Content -->
     <div class="main-content">
       <section class="section">
-        <div class="section-header">
-          <h1>Edit Pelanggan</h1>
-        </div>
         <div class="section-body">
           <div class="row">
             <div class="col-6">
               <div class="card">
-                <div class="card-body">
-                  <form method="POST" action="">
+               <div class="card-body d-flex justify-content-center">
+                <form>
+                    <div class="text-center">
+                    <h1>Detail Menu</h1>
                     <div class="form-group">
-                      <label for="nama_pelanggan">Nama Pelanggan</label>
-                      <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" value="<?php echo $dataPelanggan['nama_pelanggan']; ?>" required>
+                        <label for="kategori">Kategori:</label>
+                        <input type="text" class="form-control" value="<?php echo $menuData['id_kategori_menu']; ?>" readonly>
                     </div>
                     <div class="form-group">
-                      <label for="no_telepon">No Telepon</label>
-                      <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="<?php echo $dataPelanggan['no_telepon']; ?>" required>
+                        <label for="nama_menu">Nama Menu:</label>
+                        <input type="text" class="form-control" value="<?php echo $menuData['nama_menu']; ?>" readonly>
                     </div>
                     <div class="form-group">
-                      <label for="alamat">Alamat</label>
-                      <textarea class="form-control" id="alamat" name="alamat" rows="3" required><?php echo $dataPelanggan['alamat']; ?></textarea>
+                        <label for="harga">Harga:</label>
+                        <input type="text" class="form-control" value="<?php echo $menuData['harga']; ?>" readonly>
                     </div>
-                    <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
-                    <a href="table_pelanggan.php" class="btn btn-secondary">Batal</a>
-                  </form>
-
-                  <?php if (isset($error)) { ?>
-                    <div class="alert alert-danger mt-3"><?php echo $error; ?></div>
-                  <?php } ?>
-                </div>
-              </div>
+                    <div class="form-group">
+                        <label for="foto">Foto:</label>
+                        <br>
+                        <img src="<?php echo $menuData['foto']; ?>" alt="" style="width: 300px; height: auto;">
+                    </div>
+                    <a href="list_menu.php" class="btn btn-secondary">Kembali</a>
+                </form>
             </div>
           </div>
         </div>

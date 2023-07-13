@@ -66,7 +66,7 @@ if (isset($_GET['hapus'])) {
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Pawon Keluarga</div>
               <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item has-icon text-danger">
+              <a href="logout.php" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -76,15 +76,15 @@ if (isset($_GET['hapus'])) {
       <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.php">Pawon Keluarga</a>
+            <a href="dashboard.php">Pawon Keluarga</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.php">St</a>
+            <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
               <li class="dropdown">
-              <a href="index.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
