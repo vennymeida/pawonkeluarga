@@ -113,13 +113,9 @@ $menuData = $ambil->fetch_all(MYSQLI_ASSOC);
               <ul class="dropdown-menu">
                 <li><a class="nav-link" href="list_pembelian.php">List Pembelian</a></li>
                 <li><a class="nav-link" href="pembayaran.php">Pembayaran</a></li>
+                <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
               </ul>
-            </li>
-            <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
-              <a href="https://getstisla.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
-                <i class="fas fa-rocket"></i> Documentation
-              </a>
-            </div>        
+            </li>        
           </aside>
         </div>
 
@@ -144,7 +140,7 @@ $menuData = $ambil->fetch_all(MYSQLI_ASSOC);
                       <div class="article-details">
                         <p><?php echo $menu['harga']; ?></p>
                         <div class="article-cta">
-                          <a href="#" class="btn btn-primary">Read More</a>
+                          <a href="list_menu.php" class="btn btn-primary">Read More</a>
                         </div>
                       </div>
                     </article>

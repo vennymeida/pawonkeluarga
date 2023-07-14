@@ -48,7 +48,7 @@ if (isset($_GET['hapus'])) {
 <!-- /END GA --></head>
 
 <body>
-  <div id="app">
+<div id="app">
     <div class="main-wrapper main-wrapper-1">
       <div class="navbar-bg"></div>
       <nav class="navbar navbar-expand-lg main-navbar">
@@ -107,13 +107,10 @@ if (isset($_GET['hapus'])) {
               <ul class="dropdown-menu">
                 <li><a class="nav-link" href="list_pembelian.php">List Pembelian</a></li>
                 <li><a class="nav-link" href="pembayaran.php">Pembayaran</a></li>
+                <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
               </ul>
             </li>
-          <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
-            <a href="https://getstisla.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
-              <i class="fas fa-rocket"></i> Documentation
-            </a>
-          </div>        </aside>
+          </aside>
       </div>
 
       <!-- Main Content -->

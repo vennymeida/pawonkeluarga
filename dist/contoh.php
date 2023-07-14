@@ -1,45 +1,37 @@
 <?php
 require 'function.php';
-
 if (isset($_POST['submit'])) {
   // Ambil data dari form
-  $idPembayaran = $_POST['id_pembayaran'];
   $idPembelian = $_POST['id_pembelian'];
   $totalPembayaran = $_POST['total_pembayaran'];
   $metodePembayaran = $_POST['metode_pembayaran'];
   $tanggalPembayaran = $_POST['tanggal_pembayaran'];
 
-  // Query untuk mengupdate data pembayaran
-  $query = "UPDATE pembayaran SET id_pembelian = '$idPembelian', total_pembayaran = '$totalPembayaran', metode_pembayaran = '$metodePembayaran', tanggal_pembayaran = '$tanggalPembayaran' WHERE id_pembayaran = $idPembayaran";
+  // Query untuk menyimpan data ke tabel pembayaran
+  $query = "INSERT INTO pembayaran (id_pembelian, total_pembayaran, metode_pembayaran, tanggal_pembayaran) 
+  VALUES ('$idPembelian', '$totalPembayaran', '$metodePembayaran', '$tanggalPembayaran')";
   $result = $conn->query($query);
 
   if ($result) {
-    // Data berhasil diupdate, lakukan redirect atau tampilkan pesan sukses
     header("Location: pembayaran.php");
     exit;
   } else {
-    // Terjadi kesalahan saat mengupdate data, tampilkan pesan error
-    $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi.";
-    echo "Error: " . $query . "<br>" . $conn->error;
+    $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
+    echo "Error: " . $query . "<br>" . $conn->error; 
   }
 }
 
-// Ambil id_pembayaran dari URL
-$idPembayaran = $_GET['id'];
-
-// Query untuk mendapatkan data pembayaran berdasarkan id_pembayaran
-$queryPembayaran = "SELECT * FROM pembayaran WHERE id_pembayaran = $idPembayaran";
-$resultPembayaran = $conn->query($queryPembayaran);
-$dataPembayaran = $resultPembayaran->fetch_assoc();
-
-// Query untuk mendapatkan daftar pembelian
-$queryPembelian = "SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan = pelanggan.id_pelanggan";
+$queryPembelian = "SELECT p.id_pembelian, pel.nama_pelanggan FROM pembelian p INNER JOIN pelanggan pel ON p.id_pelanggan = pel.id_pelanggan";
 $resultPembelian = $conn->query($queryPembelian);
+
+
+
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
@@ -62,12 +54,20 @@ $resultPembelian = $conn->query($queryPembelian);
 
 <body>
   <div id="app">
+    <div class="main-wrapper main-wrapper-1">
+      <div class="navbar-bg"></div>
+      <nav class="navbar navbar-expand-lg main-navbar">
+        <!-- ... -->
+      </nav>
+      <div class="main-sidebar sidebar-style-2">
+        <!-- ... -->
+      </div>
 
       <!-- Main Content -->
       <div class="main-content">
         <section class="section">
           <div class="section-header">
-            <h1>Edit Pembayaran</h1>
+            <h1>Tambah Pembayaran</h1>
           </div>
 
           <div class="section-body">
@@ -75,7 +75,7 @@ $resultPembelian = $conn->query($queryPembelian);
               <div class="Col-12 col-md-12 col-lg-12">
                 <div class="card">
                   <div class="card-header">
-                    <h4>Form Edit Pembayaran</h4>
+                    <h4>Form Tambah Pembayaran</h4>
                   </div>
                   <div class="card-body">
                     <?php if (isset($error)) { ?>
@@ -84,13 +84,12 @@ $resultPembelian = $conn->query($queryPembelian);
                       </div>
                     <?php } ?>
                     <form method="POST" action="">
-                      <input type="hidden" name="id_pembayaran" value="<?php echo $dataPembayaran['id_pembayaran']; ?>">
                       <div class="form-group">
                         <label for="id_pembelian">Nama Pelanggan</label>
                         <select class="form-control" id="id_pembelian" name="id_pembelian" required>
                           <option value="">Pilih Nama Pelanggan</option>
                           <?php while ($rowPembelian = $resultPembelian->fetch_assoc()) { ?>
-                            <option value="<?php echo $rowPembelian['id_pembelian']; ?>" <?php if ($rowPembelian['id_pembelian'] == $dataPembayaran['id_pembelian']) echo 'selected'; ?>>
+                            <option value="<?php echo $rowPembelian['id_pembelian']; ?>">
                               <?php echo $rowPembelian['nama_pelanggan']; ?>
                             </option>
                           <?php } ?>
@@ -98,15 +97,15 @@ $resultPembelian = $conn->query($queryPembelian);
                       </div>
                       <div class="form-group">
                         <label for="total_pembayaran">Total Pembayaran</label>
-                        <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran" required value="<?php echo $dataPembayaran['total_pembayaran']; ?>">
+                        <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran" required>
                       </div>
                       <div class="form-group">
                         <label for="metode_pembayaran">Metode Pembayaran</label>
-                        <input type="text" class="form-control" id="metode_pembayaran" name="metode_pembayaran" required value="<?php echo $dataPembayaran['metode_pembayaran']; ?>">
+                        <input type="text" class="form-control" id="metode_pembayaran" name="metode_pembayaran" required>
                       </div>
                       <div class="form-group">
                         <label for="tanggal_pembayaran">Tanggal Pembayaran</label>
-                        <input type="date" class="form-control" id="tanggal_pembayaran" name="tanggal_pembayaran" required value="<?php echo $dataPembayaran['tanggal_pembayaran']; ?>">
+                        <input type="date" class="form-control" id="tanggal_pembayaran" name="tanggal_pembayaran" required>
                       </div>
                       <button type="submit" class="btn btn-primary" name="submit">Simpan</button>
                     </form>
@@ -126,7 +125,10 @@ $resultPembelian = $conn->query($queryPembelian);
   <script src="assets/modules/popper.js"></script>
   <script src="assets/modules/tooltip.js"></script>
   <script src="assets/modules/bootstrap/js/bootstrap.min.js"></script>
- 
+  <script src="assets/modules/nicescroll/jquery.nicescroll.min.js"></script>
+  <script src="assets/modules/moment.min.js"></script>
+  <script src="assets/js/stisla.js"></script>
+
   <!-- JS Libraies -->
   <script src="assets/modules/jquery-ui/jquery-ui.min.js"></script>
 
@@ -134,4 +136,5 @@ $resultPembelian = $conn->query($queryPembelian);
   <script src="assets/js/scripts.js"></script>
   <script src="assets/js/custom.js"></script>
 </body>
+
 </html>

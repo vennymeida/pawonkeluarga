@@ -108,6 +108,7 @@ if (isset($_GET['hapus'])) {
               <ul class="dropdown-menu">
                 <li><a class="nav-link" href="list_pembelian.php">List Pembelian</a></li>
                 <li><a class="nav-link" href="pembayaran.php">Pembayaran</a></li>
+                <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
               </ul>
             </li>
           <div class="mt-4 mb-4 p-3 hide-sidebar-mini">

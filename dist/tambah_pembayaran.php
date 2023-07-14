@@ -1,36 +1,37 @@
 <?php
 require 'function.php';
-
 if (isset($_POST['submit'])) {
   // Ambil data dari form
   $idPembelian = $_POST['id_pembelian'];
-  $tanggalPembelian = $_POST['tanggal_pembelian'];
   $totalPembayaran = $_POST['total_pembayaran'];
   $metodePembayaran = $_POST['metode_pembayaran'];
   $tanggalPembayaran = $_POST['tanggal_pembayaran'];
 
   // Query untuk menyimpan data ke tabel pembayaran
-  $query = "INSERT INTO pembayaran (id_pembelian, tanggal_pembelian, total_pembayaran, metode_pembayaran, tanggal_pembayaran) 
-            VALUES ('$idPembelian', '$tanggalPembelian', '$totalPembayaran', '$metodePembayaran', '$tanggalPembayaran')";
+  $query = "INSERT INTO pembayaran (id_pembelian, total_pembayaran, metode_pembayaran, tanggal_pembayaran) 
+  VALUES ('$idPembelian', '$totalPembayaran', '$metodePembayaran', '$tanggalPembayaran')";
   $result = $conn->query($query);
 
   if ($result) {
-    // Data berhasil disimpan, lakukan redirect atau tampilkan pesan sukses
     header("Location: pembayaran.php");
     exit;
   } else {
-    // Terjadi kesalahan saat menyimpan data, tampilkan pesan error
     $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
+    echo "Error: " . $query . "<br>" . $conn->error; 
   }
 }
 
-// Query untuk mendapatkan daftar pembelian
-$queryPembelian = "SELECT * FROM pembelian";
+$queryPembelian = "SELECT p.id_pembelian, pel.nama_pelanggan FROM pembelian p INNER JOIN pelanggan pel ON p.id_pelanggan = pel.id_pelanggan";
 $resultPembelian = $conn->query($queryPembelian);
+
+
+
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
@@ -53,15 +54,6 @@ $resultPembelian = $conn->query($queryPembelian);
 
 <body>
   <div id="app">
-    <div class="main-wrapper main-wrapper-1">
-      <div class="navbar-bg"></div>
-      <nav class="navbar navbar-expand-lg main-navbar">
-        <!-- ... -->
-      </nav>
-      <div class="main-sidebar sidebar-style-2">
-        <!-- ... -->
-      </div>
-
       <!-- Main Content -->
       <div class="main-content">
         <section class="section">
@@ -95,10 +87,6 @@ $resultPembelian = $conn->query($queryPembelian);
                         </select>
                       </div>
                       <div class="form-group">
-                        <label for="tanggal_pembelian">Tanggal Pembelian</label>
-                        <input type="date" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" required>
-                      </div>
-                      <div class="form-group">
                         <label for="total_pembayaran">Total Pembayaran</label>
                         <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran" required>
                       </div>
@@ -117,9 +105,6 @@ $resultPembelian = $conn->query($queryPembelian);
               </div>
         </section>
       </div>
-      <footer class="main-footer">
-        <!-- ... -->
-      </footer>
     </div>
   </div>
 
@@ -131,7 +116,7 @@ $resultPembelian = $conn->query($queryPembelian);
   <script src="assets/modules/nicescroll/jquery.nicescroll.min.js"></script>
   <script src="assets/modules/moment.min.js"></script>
   <script src="assets/js/stisla.js"></script>
-  
+
   <!-- JS Libraies -->
   <script src="assets/modules/jquery-ui/jquery-ui.min.js"></script>
 
@@ -139,4 +124,5 @@ $resultPembelian = $conn->query($queryPembelian);
   <script src="assets/js/scripts.js"></script>
   <script src="assets/js/custom.js"></script>
 </body>
+
 </html>

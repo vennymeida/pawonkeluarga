@@ -2,13 +2,13 @@
 require 'function.php';
 
 if (isset($_GET['hapus'])) {
-  $idPembelian = $_GET['hapus'];
+  $idPembelianItem = $_GET['hapus'];
   
-  $hapus = $conn->query("DELETE FROM pembelian WHERE id_pembelian = $idPembelian");
+  $hapus = $conn->query("DELETE FROM pembelian_item WHERE id_pembelian_item = $idPembelianItem");
   
   if ($hapus) {
       // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
-      header("Location: list_pembelian.php");
+      header("Location: pembelian_item.php");
       exit;
   } else {
       // Terjadi kesalahan saat menghapus data, tampilkan pesan error
@@ -48,7 +48,7 @@ if (isset($_GET['hapus'])) {
 <!-- /END GA --></head>
 
 <body>
-<div id="app">
+  <div id="app">
     <div class="main-wrapper main-wrapper-1">
       <div class="navbar-bg"></div>
       <nav class="navbar navbar-expand-lg main-navbar">
@@ -110,8 +110,13 @@ if (isset($_GET['hapus'])) {
                 <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
               </ul>
             </li>
-          </aside>
+          <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
+            <a href="https://getstisla.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
+              <i class="fas fa-rocket"></i> Documentation
+            </a>
+          </div>        </aside>
       </div>
+
       <!-- Main Content -->
       <div class="main-content">
         <section class="section">
@@ -125,30 +130,26 @@ if (isset($_GET['hapus'])) {
                 <div class="card">
                   <div class="card-header d-flex justify-content-between">
                     <h4>List Pembelian</h4>
-                    <a href="tambah_pembelian.php" class="btn btn-primary">Tambah Data</a>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-bordered table-md">
                         <tr>
                           <th>#</th>
-                          <th>Nama Pelanggan</th>
                           <th>Tanggal Pembelian</th>
+                          <th>Menu Makanan</th>
                           <th>Total Pembelian</th>
-                          <th>Action</th>
                         </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan");
+                        <?php $ambil = $conn->query("SELECT * FROM pembelian_item JOIN pembelian ON pembelian_item.id_pembelian=pembelian.id_pembelian
+                        JOIN menu ON pembelian_item.id_menu = menu.id_menu");
                         $nomorUrut = 1;
                         ?>
                         <?php while($pecah = $ambil->fetch_assoc()){?>
                         <tr>
                           <td><?php echo $nomorUrut;?></td>
-                          <td><?php echo $pecah['nama_pelanggan']; ?></td>
                           <td><?php echo $pecah['tanggal_pembelian']; ?></td>
+                          <td><?php echo $pecah['nama_menu']; ?></td>
                           <td><?php echo $pecah['total_pembelian']; ?></td>
-                          <td>
-                          <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn">Hapus</a></td>
                         </tr>
                         <?php 
                          $nomorUrut++;
