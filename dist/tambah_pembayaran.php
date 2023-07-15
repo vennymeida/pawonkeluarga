@@ -54,20 +54,17 @@ $resultPembelian = $conn->query($queryPembelian);
 
 <body>
   <div id="app">
-      <!-- Main Content -->
-      <div class="main-content">
-        <section class="section">
-          <div class="section-header">
-            <h1>Tambah Pembayaran</h1>
-          </div>
-
-          <div class="section-body">
-            <div class="row">
-              <div class="Col-12 col-md-12 col-lg-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Form Tambah Pembayaran</h4>
-                  </div>
+  <div class="main-content">
+      <section class="section">
+        <div class="section-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="card">
+               <div class="card-body d-flex justify-content-center">
+                <form method="POST" action="">
+                    <div class="text-center">
+                    <h1>Tambah Pembayaran</h1>
+                    </div>
                   <div class="card-body">
                     <?php if (isset($error)) { ?>
                       <div class="alert alert-danger" role="alert">

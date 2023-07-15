@@ -11,7 +11,7 @@ if (isset($_GET['hapus'])) {
       header("Location: list_menu.php");
       exit;
   } else {
-      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+      // Terjadi kesalahan saat menghapus data, tampilkan pesan er ror
       $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
   }
 }

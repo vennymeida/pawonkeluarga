@@ -70,21 +70,17 @@ if (isset($_POST['submit'])) {
 <body>
   <div id="app">
     <div class="main-wrapper main-wrapper-1">
-      <!-- ... isi kode HTML yang lain sesuai dengan tampilan halaman ... -->
-      <!-- ... misalnya header, sidebar, dll ... -->
-      <div class="main-content">
-        <section class="section">
-          <div class="section-header">
-            <h1>Edit Pembelian</h1>
-          </div>
-
-          <div class="section-body">
-            <div class="row">
-              <div class="col-12 col-md-12 col-lg-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Form Edit Pembelian</h4>
-                  </div>
+    <div class="main-content">
+      <section class="section">
+        <div class="section-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="card">
+               <div class="card-body d-flex justify-content-center">
+                <form method="POST" action="">
+                    <div class="text-center">
+                    <h1>Edit Pembelian</h1>
+                    </div>
                   <div class="card-body">
                     <?php if (isset($error)) { ?>
                       <div class="alert alert-danger" role="alert">

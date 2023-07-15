@@ -1,55 +1,42 @@
 <?php
+session_start();
 require 'function.php';
 
-function getAdminDataByUsername($conn, $username)
-{
-    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $adminData = $result->fetch_assoc();
-    $stmt->close();
+// Buat koneksi ke database
+// $connect = mysqli_connect("localhost", "root", "", "pawon_keluarga");
+// if (!$connect) {
+//     die("Connection failed: " . mysqli_connect_error());
+// }
 
-    return $adminData;
-}
+if (isset($_POST['username']) && isset($_POST['password'])) {
+    $email = $_POST['username'];
+    $password = md5($_POST['password']);
 
-// Example function to verify password
-function verifyPassword($password, $hashedPassword)
-{
-    return password_verify($password, $hashedPassword);
-}
+    $query = "SELECT * FROM admin WHERE username='$email' AND password='$password'";
+    $result = mysqli_query($conn, $query);
 
-// Example function to sanitize user input
-function sanitizeInput($conn, $input)
-{
-    // Sanitize user input using appropriate functions or libraries
-    $sanitizedInput = mysqli_real_escape_string($conn, $input);
-    return $sanitizedInput;
-}
+    if (!$result) {
+        die("Query failed: " . mysqli_error($conn));
+    }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = sanitizeInput($conn, $_POST['username']);
-    $password = $_POST['password'];
+    $cek = mysqli_fetch_assoc($result);
 
-    $adminData = getAdminDataByUsername($conn, $username);
-
-    if ($adminData) {
-        // Verify the entered password with the hashed password from the database
-        if (verifyPassword($password, $adminData['password'])) {
-            // Password is correct, create a session and redirect to the dashboard or desired page
-            session_start();
-            $_SESSION['admin_username'] = $adminData['username'];
-            $_SESSION['admin_nama'] = $adminData['nama_admin'];
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = "Invalid username or password.";
-        }
+    if ($cek) {
+        $_SESSION['admin_id'] = $cek['admin_id'];
+        $_SESSION['username'] = $cek['username'];
+        header("Location: dashboard.php");
+        exit;
     } else {
-        $error = "Invalid username or password.";
+        $_SESSION['error_message'] = 'Email atau password salah.';
+        header("Location: index.php");
+        exit;
     }
 }
+
+
+mysqli_close($conn);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               <div class="card-header"><h4>Login</h4></div>
 
               <div class="card-body">
-                <form method="POST" action="dashboard.php" class="needs-validation" novalidate="">
+              <form method="POST" action="index.php" class="needs-validation" novalidate="">
                   <div class="form-group">
                     <label for="username">Username</label>
                     <input id="username" type="username" class="form-control" name="username" tabindex="1" required autofocus>

@@ -1,4 +1,13 @@
 <?php
+session_start();
+
+
+if (!isset($_SESSION['username'])) {
+  // Jika pengguna belum login, arahkan ke halaman login atau halaman lain yang sesuai
+  header("Location: index.php");
+exit;
+}
+
 require 'function.php';
 if (isset($_GET['hapus'])) {
   $idMenu = $_GET['hapus'];
