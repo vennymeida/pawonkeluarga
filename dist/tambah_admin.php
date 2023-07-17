@@ -7,16 +7,20 @@ if (isset($_POST['simpan_data'])) {
     $password = $_POST['password'];
     $nama_admin = $_POST['nama_admin'];
     
-    // Proses tambah data admin ke database
-    $tambah = $conn->query("INSERT INTO admin (username, password, nama_admin) VALUES ('$username', '$password', '$nama_admin')");
-    
-    if ($tambah) {
-        // Data berhasil ditambahkan, lakukan redirect ke halaman table_admin.php
-        header("Location: table_admin.php");
-        exit;
+    $check = $conn->query("SELECT * FROM admin WHERE username = '$username'");
+    if ($check->num_rows > 0) {
+        $error = "Username already exists. Please choose a different username.";
     } else {
-        // Terjadi kesalahan saat menambahkan data, tampilkan pesan error
-        $error = "Terjadi kesalahan saat menambahkan data. Silakan coba lagi.";
+        $tambah = $conn->query("INSERT INTO admin (username, password, nama_admin) VALUES ('$username', '$password', '$nama_admin')");
+  
+        if ($tambah) {
+            $_SESSION['create_status'] = 'success';
+            $success_message = "Data berhasil ditambahkan.";
+            // header("Location: table_admin.php");
+            // exit;
+        } else {
+            $error = "Terjadi kesalahan saat menambahkan data. Silakan coba lagi.";
+        }
     }
 }
 ?>
@@ -54,19 +58,101 @@ if (isset($_POST['simpan_data'])) {
 <body>
   <div id="app">
     <!-- Bagian header dan sidebar -->
+    <div class="main-wrapper main-wrapper-1">
+      <div class="navbar-bg"></div>
+      <nav class="navbar navbar-expand-lg main-navbar">
+        <form class="form-inline mr-auto">
+          <ul class="navbar-nav mr-3">
+            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
+          </ul>
+
+        </form>
+        <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+            <img alt="image" src="assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
+            <div class="d-sm-none d-lg-inline-block">Hi, Admin</div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-title">Pawon Keluarga</div>
+            <div class="dropdown-divider"></div>
+            <a href="logout.php" class="dropdown-item has-icon text-danger">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </li>
+        </ul>
+      </nav>
+      <div class="main-sidebar sidebar-style-2">
+        <aside id="sidebar-wrapper">
+          <div class="sidebar-brand">
+            <a href="dashboard.php">Pawon Keluarga</a>
+          </div>
+          <div class="sidebar-brand sidebar-brand-sm">
+            <a href="dashboard.php">St</a>
+          </div>
+          <ul class="sidebar-menu">
+            <li class="menu-header">Dashboard</li>
+            <li class="dropdown">
+              <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+            </li>
+            <li class="menu-header">User</li>
+            <li class="dropdown">
+              <a href="#" class="nav-link has-dropdown"><i class="far fa-user"></i> <span>User</span></a>
+              <ul class="dropdown-menu">
+                <li><a href="table_pelanggan.php">Data Pelanggan</a></li>
+                <li><a href="table_admin.php">Data Admin</a></li>
+              </ul>
+            </li>
+            <li class="menu-header">Food</li>
+            <li class="dropdown">
+              <a href="#" class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Menu</span></a>
+              <ul class="dropdown-menu">
+                <li><a href="kategori_menu.php">Kategori Menu</a></li>
+                <li><a href="list_menu.php">Menu Makanan</a></li>
+              </ul>
+            </li>
+            <li class="menu-header">Order</li>
+            <li class="dropdown">
+              <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Order Item</span></a>
+              <ul class="dropdown-menu">
+                <li><a class="nav-link" href="list_pembelian.php">List Pembelian</a></li>
+                <li><a class="nav-link" href="pembayaran.php">Pembayaran</a></li>
+                <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
+              </ul>
+            </li>
+        </aside>
+      </div>
 
     <!-- Main Content -->
     <div class="main-content">
       <section class="section">
         <div class="section-body">
           <div class="row">
-            <div class="col-6">
-              <div class="card">
-               <div class="card-body d-flex justify-content-center">
-                <form method="POST" action="">
-                    <div class="text-center">
-                    <h1>Tambah Admin</h1>
-                    </div>
+            <div class="col-6 offset-3">
+            <div class="section-header">
+              <h1 class="text-center mb-4">Tambah Admin</h1></div>
+              <?php if (isset($error)) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <?php echo $error; ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              <?php } ?>
+              <?php if (isset($success_message)) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <?php echo $success_message; ?>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <script>
+                  setTimeout(function() {
+                    window.location.href = "table_admin.php";
+                  }, 1000); 
+                </script>
+              <?php } ?>
+              <form method="POST" action="">
                 <div class="form-group">
                   <label for="username">Username</label>
                   <input type="text" class="form-control" id="username" name="username" required>
@@ -79,13 +165,11 @@ if (isset($_POST['simpan_data'])) {
                   <label for="nama_admin">Nama Admin</label>
                   <input type="text" class="form-control" id="nama_admin" name="nama_admin" required>
                 </div>
-                <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
-                <a href="table_admin.php" class="btn btn-secondary">Batal</a>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
+                  <a href="table_admin.php" class="btn btn-secondary">Batal</a>
+                </div>
               </form>
-
-              <?php if (isset($error)) { ?>
-                <div class="alert alert-danger mt-3"><?php echo $error; ?></div>
-              <?php } ?>
             </div>
           </div>
         </div>

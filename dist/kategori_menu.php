@@ -3,17 +3,20 @@ require 'function.php';
 
 if (isset($_GET['hapus'])) {
   $idKategori = $_GET['hapus'];
-  
-  // Proses hapus data pelanggan dari database
-  $hapus = $conn->query("DELETE FROM kategori_menu WHERE id_kategori_menu = $idKategori");
-  
-  if ($hapus) {
-      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
-      header("Location: kategori_menu.php");
-      exit;
+
+  $check = $conn->query("SELECT * FROM menu WHERE id_kategori_menu = $idKategori");
+  if ($check->num_rows > 0) {
+     
+      $error = "Kategori tidak dapat dihapus karena sedang digunakan dalam menu. Harap hapus atau ubah menu terlebih dahulu.";
   } else {
-      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
-      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+      
+      $hapus = $conn->query("DELETE FROM kategori_menu WHERE id_kategori_menu = $idKategori");
+      if ($hapus) {
+          header("Location: kategori_menu.php");
+          exit;
+      } else {
+          $error =  "Kategori tidak dapat dihapus karena sedang digunakan dalam menu. Harap hapus atau ubah menu terlebih dahulu.";
+      }
   }
 }
 ?>
@@ -120,7 +123,30 @@ if (isset($_GET['hapus'])) {
           <div class="section-header">
             <h1>Kategori Menu Makanan</h1>
           </div>
+          <div class="row">
+              <div class="col-12">
+                <?php 
+                if (isset($_SESSION['create_status'])) {
+                  if ($_SESSION['create_status'] == 'success') {
+                      echo '<div class="alert alert-success">Data berhasil ditambahkan.</div>';
+                  } else {
+                      echo '<div class="alert alert-danger">Terjadi kesalahan saat menambahkan data. Silakan coba lagi.</div>';
+                  }
+                  // hapus session setelah ditampilkan
+                  unset($_SESSION['create_status']);
+                }
 
+                ?>
+              </div>
+            </div>
+
+          <?php if (isset($error)) { ?>
+                    <div class="alert alert-danger alert-dismissible fade show"><?php echo $error; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                <?php } ?>
           <div class="section-body">
             <div class="row">
               <div class="Col-12 col-md-12 col-lg-12">
@@ -155,11 +181,6 @@ if (isset($_GET['hapus'])) {
                       </table>
                     </div>
                   </div>
-                  <?php if (isset($error)) { ?>
-                  <div class="card-footer">
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
-                  </div>
-                <?php } ?>
                   <div class="card-footer text-right">
                     <nav class="d-inline-block">
                       <ul class="pagination mb-0">

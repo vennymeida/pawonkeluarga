@@ -149,7 +149,7 @@ $menuData = $ambil->fetch_all(MYSQLI_ASSOC);
                       <div class="article-details">
                         <p>Rp <?php echo $menu['harga']; ?></p>
                         <div class="article-cta">
-                          <a href="list_menu.php" class="btn btn-primary">Read More</a>
+                          <a href="detail_menu.php?id=<?php echo $menu['id_menu']; ?>" class="btn btn-primary">Read More</a>
                         </div>
                       </div>
                     </article>

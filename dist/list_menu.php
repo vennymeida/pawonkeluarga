@@ -3,19 +3,30 @@ require 'function.php';
 
 if (isset($_GET['hapus'])) {
   $idMenu = $_GET['hapus'];
-  
-  // Proses hapus data pelanggan dari database
+
+  // Dapatkan nama file foto sebelum menghapus data
+  $query = "SELECT foto FROM menu WHERE id_menu = $idMenu";
+  $result = $conn->query($query);
+  $row = $result->fetch_assoc();
+  $filename = $row['foto'];
+
+  // Proses hapus data menu dari database
   $hapus = $conn->query("DELETE FROM menu WHERE id_menu = $idMenu");
-  
+
   if ($hapus) {
-      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
-      header("Location: list_menu.php");
-      exit;
+    // Hapus gambar lama dari direktori penyimpanan
+    if (file_exists($filename)) {
+      unlink($filename);
+    }
+    // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
+    header("Location: list_menu.php");
+    exit;
   } else {
-      // Terjadi kesalahan saat menghapus data, tampilkan pesan er ror
-      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+    // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+    $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
   }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
