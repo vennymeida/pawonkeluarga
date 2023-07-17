@@ -16,6 +16,10 @@ if (isset($_GET['id'])) {
     // Query untuk mendapatkan daftar pelanggan
     $queryPelanggan = "SELECT * FROM pelanggan";
     $resultPelanggan = $conn->query($queryPelanggan);
+
+    // Query untuk mendapatkan daftar menu
+    $queryMenu = "SELECT * FROM menu";
+    $resultMenu = $conn->query($queryMenu);
   } else {
     // Jika data pembelian tidak ditemukan, lakukan redirect atau tampilkan pesan error
     header("Location: list_pembelian.php");
@@ -27,15 +31,27 @@ if (isset($_POST['submit'])) {
   // Ambil data dari form
   $idPembelian = $_POST['id_pembelian'];
   $idPelanggan = $_POST['id_pelanggan'];
+  $idMenu = $_POST['id_menu'];
   $tanggalPembelian = $_POST['tanggal_pembelian'];
   $totalPembelian = $_POST['total_pembelian'];
+  $totalHarga = $_POST['total_harga'];
 
   // Query untuk update data pembelian
-  $query = "UPDATE pembelian SET id_pelanggan = '$idPelanggan', tanggal_pembelian = '$tanggalPembelian', total_pembelian = '$totalPembelian' WHERE id_pembelian = $idPembelian";
+  $query = "UPDATE pembelian SET id_pelanggan = '$idPelanggan', id_menu = '$idMenu', tanggal_pembelian = '$tanggalPembelian', total_pembelian = '$totalPembelian', total_harga = '$totalHarga' WHERE id_pembelian = $idPembelian";
   $result = $conn->query($query);
 
   if ($result) {
     // Data berhasil diupdate, lakukan redirect atau tampilkan pesan sukses
+    // Mengurangi stok pada tabel menu
+    $queryStokMenu = "SELECT stok_makanan FROM menu WHERE id_menu = '$idMenu'";
+    $resultStokMenu = $conn->query($queryStokMenu);
+    $rowStokMenu = $resultStokMenu->fetch_assoc();
+    $stokMenu = $rowStokMenu['stok_makanan'];
+
+    $stokMenuBaru = $stokMenu - $totalPembelian;
+
+    $queryUpdateStokMenu = "UPDATE menu SET stok_makanan = '$stokMenuBaru' WHERE id_menu = '$idMenu'";
+    $resultUpdateStokMenu = $conn->query($queryUpdateStokMenu);
     $_SESSION['create_status'] = 'success';
     $success_message = "Data berhasil diupdate.";
     // header("Location: list_pembelian.php");
@@ -185,13 +201,28 @@ if (isset($_POST['submit'])) {
                         </select>
                       </div>
                       <div class="form-group">
+   <label for="total_pembelian">Total Pembelian</label>
+   <input type="number" class="form-control" id="total_pembelian" name="total_pembelian" value="<?php echo $dataPembelian['total_pembelian']; ?>" required>
+</div>
+<div class="form-group">
+                      <label for="id_menu">Menu Makanan Tersedia</label>
+                      <select class="form-control" id="id_menu" name="id_menu" required>
+                        <option value="">Pilih Makanan</option>
+                        <?php while ($rowMenu = $resultMenu->fetch_assoc()) { ?>
+                          <option value="<?php echo $rowMenu['id_menu']; ?>" data-harga="<?php echo $rowMenu['harga']; ?>" <?php if ($rowMenu['id_menu'] == $dataPembelian['id_menu']) echo 'selected'; ?>>
+                            <?php echo $rowMenu['nama_menu']; ?>
+                          </option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                      <div class="form-group">
                         <label for="tanggal_pembelian">Tanggal Pembelian</label>
                         <input type="date" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" value="<?php echo $dataPembelian['tanggal_pembelian']; ?>" required>
                       </div>
                       <div class="form-group">
-                        <label for="total_pembelian">Total Pembelian</label>
-                        <input type="number" class="form-control" id="total_pembelian" name="total_pembelian" value="<?php echo $dataPembelian['total_pembelian']; ?>" required>
-                      </div>
+                          <label for="total_harga">Total Harga</label>
+                          <input type="number" class="form-control" id="total_harga" name="total_harga" value="<?php echo $rowPembelian['total_harga']; ?>" readonly>
+                        </div>
                       <button type="submit" class="btn btn-primary" name="submit">Simpan</button>
                     </form>
                   </div>
@@ -207,6 +238,17 @@ if (isset($_POST['submit'])) {
 
   <!-- General JS Scripts -->
   <script src="assets/modules/jquery.min.js"></script>
+  <script>
+    var dropdownMenu = document.getElementById("id_menu");
+    var totalHargaInput = document.getElementById("total_harga");
+    dropdownMenu.addEventListener("change", function() {
+      var hargaMenu = dropdownMenu.options[dropdownMenu.selectedIndex].getAttribute("data-harga");
+
+      var totalPembelian = parseFloat(document.getElementById("total_pembelian").value);
+      var totalHarga = hargaMenu * totalPembelian;
+      totalHargaInput.value = totalHarga;
+    });
+  </script>
   <script src="assets/modules/popper.js"></script>
   <script src="assets/modules/tooltip.js"></script>
   <script src="assets/modules/bootstrap/js/bootstrap.min.js"></script>

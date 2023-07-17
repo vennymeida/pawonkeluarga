@@ -128,35 +128,38 @@ if (isset($_GET['hapus'])) {
                     <h4>List Pembelian</h4>
                   </div>
                   <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-md">
-                        <tr>
-                          <th>#</th>
-                          <th>Nama Pelanggan</th>
-                          <th>Tanggal Pembelian</th>
-                          <th>Menu Makanan</th>
-                          <th>Total Pembelian</th>
-                          <th>Total Harga</th>
-                        </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM pembelian_item JOIN pembelian ON pembelian_item.id_pembelian=pembelian.id_pembelian
-                        JOIN menu ON pembelian_item.id_menu = menu.id_menu");
-                        $nomorUrut = 1;
-                        ?>
-                        <?php while($pecah = $ambil->fetch_assoc()){?>
-                        <tr>
-                          <td><?php echo $nomorUrut;?></td>
-                          <td><?php echo $pecah['id_pelanggan'];?></td>
-                          <td><?php echo $pecah['tanggal_pembelian']; ?></td>
-                          <td><?php echo $pecah['nama_menu']; ?></td>
-                          <td><?php echo $pecah['total_pembelian']; ?></td>
-                          <td><?php echo $pecah['total_pembelian']; ?></td>
-                        </tr>
-                        <?php 
-                         $nomorUrut++;
-                      } ?>
-                      </table>
-                    </div>
-                  </div>
+                  <div class="table-responsive">
+    <table class="table table-bordered table-md">
+      <tr>
+        <th>#</th>
+        <th>Nama Pelanggan</th>
+        <th>Tanggal Pembelian</th>
+        <th>Menu Makanan</th>
+        <th>Total Pembelian</th>
+        <th>Total Harga</th>
+      </tr>
+      <?php
+       $ambil = $conn->query("SELECT pembelian.*, pelanggan.nama_pelanggan, menu.nama_menu, menu.harga
+       FROM pembelian
+       JOIN pelanggan ON pembelian.id_pelanggan = pelanggan.id_pelanggan
+       JOIN menu ON pembelian.id_menu = menu.id_menu");
+      $nomorUrut = 1;
+      ?>
+      <?php while ($pecah = $ambil->fetch_assoc()) { ?>
+        <tr>
+          <td><?php echo $nomorUrut; ?></td>
+          <td><?php echo $pecah['nama_pelanggan']; ?></td>
+          <td><?php echo $pecah['tanggal_pembelian']; ?></td>
+          <td><?php echo $pecah['nama_menu']; ?></td>
+          <td><?php echo $pecah['total_pembelian']; ?></td>
+          <td><?php echo $pecah['total_harga']; ?></td>
+        </tr>
+        <?php
+        $nomorUrut++;
+      } ?>
+    </table>
+  </div>
+</div>
                   <div class="card-footer text-right">
                     <nav class="d-inline-block">
                       <ul class="pagination mb-0">

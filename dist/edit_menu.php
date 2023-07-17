@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'function.php';
 $queryKategori = "SELECT * FROM kategori_menu";
 $resultKategori = $conn->query($queryKategori);
@@ -8,7 +9,7 @@ if (isset($_POST['simpan_data'])) {
     $kategori = $_POST['kategori'];
     $nama_menu = $_POST['nama_menu'];
     $harga = $_POST['harga'];
-    $stok = $_POST['stok'];
+    $stok = $_POST['stok_makanan'];
     
     // Check if a new file is uploaded
     if ($_FILES['foto']['name'] !== '') {
@@ -33,7 +34,7 @@ if (isset($_POST['simpan_data'])) {
                 // header("Location: list_menu.php");
                 // exit;
             } else {
-                $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi.";
+                $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi."  .  $conn->error;
             }
         } else {
             $error = "Gagal meng-upload foto.";
@@ -213,8 +214,8 @@ if (isset($_GET['id'])) {
                   <input type="file" class="form-control" id="foto" name="foto" accept=".jpg, .jpeg, .png" onchange="validateFile()">
                 </div>
                 <div class="form-group">
-                  <label for="stok">Stok Makanan</label>
-                  <input type="text" class="form-control" id="stok" name="stok" required value="<?php echo $menuData['stok_makanan']; ?>" required>
+                  <label for="stok_makanan">Stok Makanan</label>
+                  <input type="text" class="form-control" id="stok_makanan" name="stok_makanan" required value="<?php echo $menuData['stok_makanan']; ?>" required>
                 </div>
                 <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
                 <a href="list_menu.php" class="btn btn-secondary">Batal</a>

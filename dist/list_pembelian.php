@@ -3,21 +3,25 @@ require 'function.php';
 
 if (isset($_GET['hapus'])) {
   $idPembelian = $_GET['hapus'];
-  
+
   $hapus = $conn->query("DELETE FROM pembelian WHERE id_pembelian = $idPembelian");
-  
+
   if ($hapus) {
-      // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
-      header("Location: list_pembelian.php");
-      exit;
+    // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
+    header("Location: list_pembelian.php");
+    exit;
   } else {
-      // Terjadi kesalahan saat menghapus data, tampilkan pesan error
-      $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
+    // Terjadi kesalahan saat menghapus data, tampilkan pesan error
+    $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
   }
 }
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
@@ -36,19 +40,23 @@ if (isset($_GET['hapus'])) {
   <!-- Template CSS -->
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/components.css">
-<!-- Start GA -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Start GA -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'UA-94034622-3');
-</script>
-<!-- /END GA --></head>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-94034622-3');
+  </script>
+  <!-- /END GA -->
+</head>
 
 <body>
-<div id="app">
+  <div id="app">
     <div class="main-wrapper main-wrapper-1">
       <div class="navbar-bg"></div>
       <nav class="navbar navbar-expand-lg main-navbar">
@@ -57,19 +65,20 @@ if (isset($_GET['hapus'])) {
             <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
             <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
           </ul>
-          
+
         </form>
-          <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+        <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
             <img alt="image" src="assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
-            <div class="d-sm-none d-lg-inline-block">Hi, Admin</div></a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <div class="dropdown-title">Pawon Keluarga</div>
-              <div class="dropdown-divider"></div>
-              <a href="logout.php" class="dropdown-item has-icon text-danger">
-                <i class="fas fa-sign-out-alt"></i> Logout
-              </a>
-            </div>
-          </li>
+            <div class="d-sm-none d-lg-inline-block">Hi, Admin</div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-title">Pawon Keluarga</div>
+            <div class="dropdown-divider"></div>
+            <a href="logout.php" class="dropdown-item has-icon text-danger">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </li>
         </ul>
       </nav>
       <div class="main-sidebar sidebar-style-2">
@@ -81,23 +90,23 @@ if (isset($_GET['hapus'])) {
             <a href="dashboard.php">St</a>
           </div>
           <ul class="sidebar-menu">
-          <li class="menu-header">Dashboard</li>
-              <li class="dropdown">
+            <li class="menu-header">Dashboard</li>
+            <li class="dropdown">
               <a href="dashboard.php"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="far fa-user"></i> <span>User</span></a>
               <ul class="dropdown-menu">
-              <li><a href="table_pelanggan.php">Data Pelanggan</a></li>
-              <li><a href="table_admin.php">Data Admin</a></li>  
+                <li><a href="table_pelanggan.php">Data Pelanggan</a></li>
+                <li><a href="table_admin.php">Data Admin</a></li>
               </ul>
             </li>
             <li class="menu-header">Food</li>
             <li class="dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Menu</span></a>
-              <ul class="dropdown-menu"> 
-                <li><a href="kategori_menu.php">Kategori Menu</a></li> 
+              <ul class="dropdown-menu">
+                <li><a href="kategori_menu.php">Kategori Menu</a></li>
                 <li><a href="list_menu.php">Menu Makanan</a></li>
               </ul>
             </li>
@@ -110,7 +119,7 @@ if (isset($_GET['hapus'])) {
                 <li><a class="nav-link" href="pembelian_item.php">History Pembelian</a></li>
               </ul>
             </li>
-          </aside>
+        </aside>
       </div>
       <!-- Main Content -->
       <div class="main-content">
@@ -134,27 +143,40 @@ if (isset($_GET['hapus'])) {
                           <th>#</th>
                           <th>Nama Pelanggan</th>
                           <th>Tanggal Pembelian</th>
+                          <th>Nama Makanan</th>
+                          <th>Harga Per-item</th>
                           <th>Total Pembelian</th>
                           <th>Total Harga</th>
                           <th>Action</th>
                         </tr>
-                        <?php $ambil = $conn->query("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan");
+                        <?php
+                        $ambil = $conn->query("SELECT pembelian.*, pelanggan.nama_pelanggan, menu.nama_menu, menu.harga
+                      FROM pembelian
+                      JOIN pelanggan ON pembelian.id_pelanggan = pelanggan.id_pelanggan
+                      JOIN menu ON pembelian.id_menu = menu.id_menu");
                         $nomorUrut = 1;
+
+                        if ($ambil === FALSE) {
+                          echo "Terjadi kesalahan saat menjalankan query: " . $conn->error;
+                        }
                         ?>
-                        <?php while($pecah = $ambil->fetch_assoc()){?>
-                        <tr>
-                          <td><?php echo $nomorUrut;?></td>
-                          <td><?php echo $pecah['nama_pelanggan']; ?></td>
-                          <td><?php echo $pecah['tanggal_pembelian']; ?></td>
-                          <td><?php echo $pecah['total_pembelian']; ?></td>
-                          <td><?php echo $pecah['total_pembelian']; ?></td>
-                          <td>
-                          <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
-                        </tr>
-                        <?php 
-                         $nomorUrut++;
-                      } ?>
+                        <?php while ($pecah = $ambil->fetch_assoc()) { ?>
+                          <tr>
+                            <td><?php echo $nomorUrut; ?></td>
+                            <td><?php echo $pecah['nama_pelanggan']; ?></td>
+                            <td><?php echo $pecah['tanggal_pembelian']; ?></td>
+                            <td><?php echo $pecah['nama_menu']; ?></td>
+                            <td><?php echo $pecah['harga']; ?></td>
+                            <td><?php echo $pecah['total_pembelian']; ?></td>
+                            <td><?php echo $pecah['total_harga'] ?></td>
+                            <td>
+                              <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
+                              <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
+                            </td>
+                          </tr>
+                        <?php
+                          $nomorUrut++;
+                        } ?>
                       </table>
                     </div>
                   </div>
@@ -197,15 +219,16 @@ if (isset($_GET['hapus'])) {
   <script src="assets/modules/nicescroll/jquery.nicescroll.min.js"></script>
   <script src="assets/modules/moment.min.js"></script>
   <script src="assets/js/stisla.js"></script>
-  
+
   <!-- JS Libraies -->
   <script src="assets/modules/jquery-ui/jquery-ui.min.js"></script>
 
   <!-- Page Specific JS File -->
   <script src="assets/js/page/components-table.js"></script>
-  
+
   <!-- Template JS File -->
   <script src="assets/js/scripts.js"></script>
   <script src="assets/js/custom.js"></script>
 </body>
+
 </html>
