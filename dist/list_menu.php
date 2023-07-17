@@ -1,5 +1,6 @@
 <?php
 require 'function.php';
+
 if (isset($_GET['hapus'])) {
   $idMenu = $_GET['hapus'];
   
@@ -137,6 +138,7 @@ if (isset($_GET['hapus'])) {
                           <th>Nama Menu</th>
                           <th>Harga</th>
                           <th>Foto</th>
+                          <th>Stok Makanan</th>
                           <th>Action</th>
                         </tr>
                         <?php $ambil = $conn->query("SELECT * FROM menu JOIN kategori_menu ON menu.id_kategori_menu=kategori_menu.id_kategori_menu");
@@ -146,8 +148,9 @@ if (isset($_GET['hapus'])) {
                           <td><?php echo $nomorUrut; ?></td>
                           <td><?php echo $pecah['nama_kategori'] ?></td>
                           <td><?php echo $pecah['nama_menu']; ?></td>
-                          <td><?php echo $pecah['harga']; ?></td>
+                          <td>Rp <?php echo number_format($pecah['harga'], 0, ',', '.'); ?></td>
                           <td><img src="<?php echo $pecah['foto']; ?>" alt="" style="width: 100px; height: 100px;"></td>
+                          <td><?php echo $pecah['stok_makanan']; ?></td>
                           <td>
                           <a href="detail_menu.php?id=<?php echo $pecah['id_menu']; ?>" class="btn btn-info" >Detail</a>
                           <a href="edit_menu.php?id=<?php echo $pecah['id_menu']; ?>" class="btn btn-warning" >Edit</a>

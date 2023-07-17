@@ -13,7 +13,7 @@ if (isset($_POST['simpan_data'])) {
         $target_file = $target_dir . basename($foto);
 
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            $tambah = $conn->query("INSERT INTO menu (id_kategori_menu, nama_menu, harga, foto) VALUES ('$kategori','$nama_menu', '$harga', '$target_file')");
+            $tambah = $conn->query("INSERT INTO menu (id_kategori_menu, nama_menu, harga, foto, stok_makanan) VALUES ('$kategori','$nama_menu', '$harga', '$target_file', '$stok')");
 
             if ($tambah) {
                 header("Location: list_menu.php");
@@ -27,6 +27,7 @@ if (isset($_POST['simpan_data'])) {
     } else {
         $error = "Foto is required.";
     }
+    $stok = $_POST['stok_makanan'];
 }
 
 ?>
@@ -91,7 +92,11 @@ if (isset($_POST['simpan_data'])) {
                 </div>
                 <div class="form-group">
                   <label for="foto">Foto</label>
-                  <input type="file" class="form-control" id="foto" name="foto">
+                  <input type="file" class="form-control" id="foto" name="foto" accept=".jpg, .jpeg, .png" onchange="validateFile()">
+                </div>
+                <div class="form-group">
+                  <label for="stok">Stok Makanan</label>
+                  <input type="text" class="form-control" id="stok" name="stok" required>
                 </div>
                 <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
                 <a href="list_menu.php" class="btn btn-secondary">Batal</a>
@@ -105,6 +110,28 @@ if (isset($_POST['simpan_data'])) {
       </section>
     </div>
   </div>
+  <script>
+function validateFile() {
+  var fileInput = document.getElementById('foto');
+  var filePath = fileInput.value;
+  var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Hanya izinkan ekstensi file jpg, jpeg, png
+  var maxSize = 1 * 1024 * 1024; // Ukuran maksimal file dalam bytes (contoh: 1 MB)
+
+  // Mengecek apakah ekstensi file sesuai dengan yang diizinkan
+  if (!allowedExtensions.exec(filePath)) {
+    alert('File yang diunggah harus dalam format JPG, JPEG, PNG.');
+    fileInput.value = ''; // Menghapus nilai file input
+    return false;
+  }
+
+  // Mengecek ukuran file
+  if (fileInput.files[0].size > maxSize) {
+    alert('Ukuran file terlalu besar. Maksimal ukuran file adalah 1 MB.');
+    fileInput.value = ''; // Menghapus nilai file input
+    return false;
+  }
+}
+</script>
 
   <!-- General JS Scripts -->
   <script src="assets/modules/jquery.min.js"></script>

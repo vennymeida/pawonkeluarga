@@ -8,6 +8,7 @@ if (isset($_POST['simpan_data'])) {
     $kategori = $_POST['kategori'];
     $nama_menu = $_POST['nama_menu'];
     $harga = $_POST['harga'];
+    $stok = $_POST['stok'];
     
     // Check if a new file is uploaded
     if ($_FILES['foto']['name'] !== '') {
@@ -16,7 +17,7 @@ if (isset($_POST['simpan_data'])) {
         $target_file = $target_dir . basename($foto);
 
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga', foto = '$target_file' WHERE id_menu = '$id_menu'");
+            $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga', foto = '$target_file',stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
 
             if ($update) {
                 header("Location: list_menu.php");
@@ -29,7 +30,7 @@ if (isset($_POST['simpan_data'])) {
         }
     } else {
         // If no new file is uploaded, update the data without changing the existing foto
-        $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga' WHERE id_menu = '$id_menu'");
+        $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga',stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
 
         if ($update) {
             header("Location: list_menu.php");
@@ -113,7 +114,11 @@ if (isset($_GET['id'])) {
                 </div>
                 <div class="form-group">
                   <label for="foto">Foto</label>
-                  <input type="file" class="form-control" id="foto" name="foto">
+                  <input type="file" class="form-control" id="foto" name="foto" accept=".jpg, .jpeg, .png" onchange="validateFile()">
+                </div>
+                <div class="form-group">
+                  <label for="stok">Stok Makanan</label>
+                  <input type="text" class="form-control" id="stok" name="stok" required value="<?php echo $menuData['stok_makanan']; ?>" required>
                 </div>
                 <button type="submit" class="btn btn-primary" name="simpan_data">Simpan</button>
                 <a href="list_menu.php" class="btn btn-secondary">Batal</a>
@@ -127,6 +132,28 @@ if (isset($_GET['id'])) {
       </section>
     </div>
   </div>
+  <script>
+function validateFile() {
+  var fileInput = document.getElementById('foto');
+  var filePath = fileInput.value;
+  var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Hanya izinkan ekstensi file jpg, jpeg, png
+  var maxSize = 1 * 1024 * 1024; // Ukuran maksimal file dalam bytes (contoh: 1 MB)
+
+  // Mengecek apakah ekstensi file sesuai dengan yang diizinkan
+  if (!allowedExtensions.exec(filePath)) {
+    alert('File yang diunggah harus dalam format JPG, JPEG, PNG.');
+    fileInput.value = ''; // Menghapus nilai file input
+    return false;
+  }
+
+  // Mengecek ukuran file
+  if (fileInput.files[0].size > maxSize) {
+    alert('Ukuran file terlalu besar. Maksimal ukuran file adalah 1 MB.');
+    fileInput.value = ''; // Menghapus nilai file input
+    return false;
+  }
+}
+</script>
 
   <!-- General JS Scripts -->
   <script src="assets/modules/jquery.min.js"></script>

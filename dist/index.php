@@ -2,12 +2,6 @@
 session_start();
 require 'function.php';
 
-// Buat koneksi ke database
-// $connect = mysqli_connect("localhost", "root", "", "pawon_keluarga");
-// if (!$connect) {
-//     die("Connection failed: " . mysqli_connect_error());
-// }
-
 if (isset($_POST['username']) && isset($_POST['password'])) {
     $email = $_POST['username'];
     $password = md5($_POST['password']);
@@ -32,8 +26,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         exit;
     }
 }
-
-
 mysqli_close($conn);
 ?>
 

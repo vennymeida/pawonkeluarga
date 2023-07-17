@@ -1,5 +1,14 @@
 <?php
 require 'function.php';
+
+// Define available metode pembayaran options
+$metodePembayaranOptions = array(
+  'transfer' => 'Transfer',
+  'cash' => 'Cash',
+  'debit' => 'Debit',
+  'qrcode' => 'QR Code',
+);
+
 if (isset($_POST['submit'])) {
   // Ambil data dari form
   $idPembelian = $_POST['id_pembelian'];
@@ -88,9 +97,14 @@ $resultPembelian = $conn->query($queryPembelian);
                         <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran" required>
                       </div>
                       <div class="form-group">
-                        <label for="metode_pembayaran">Metode Pembayaran</label>
-                        <input type="text" class="form-control" id="metode_pembayaran" name="metode_pembayaran" required>
-                      </div>
+          <label for="metode_pembayaran">Metode Pembayaran</label>
+          <select class="form-control" id="metode_pembayaran" name="metode_pembayaran" required>
+            <option value="">Pilih Metode Pembayaran</option>
+            <?php foreach ($metodePembayaranOptions as $key => $value) { ?>
+              <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+            <?php } ?>
+          </select>
+        </div>
                       <div class="form-group">
                         <label for="tanggal_pembayaran">Tanggal Pembayaran</label>
                         <input type="date" class="form-control" id="tanggal_pembayaran" name="tanggal_pembayaran" required>

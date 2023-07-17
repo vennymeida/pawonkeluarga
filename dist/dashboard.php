@@ -18,7 +18,7 @@ if (isset($_GET['hapus'])) {
   if ($hapus) {
       // Data berhasil dihapus, lakukan redirect atau tampilkan pesan sukses
       header("Location: list_menu.php");
-      exit;
+      exit; 
   } else {
       // Terjadi kesalahan saat menghapus data, tampilkan pesan error
       $error = "Terjadi kesalahan saat menghapus data. Silakan coba lagi.";
@@ -147,7 +147,7 @@ $menuData = $ambil->fetch_all(MYSQLI_ASSOC);
                         </div>
                       </div>
                       <div class="article-details">
-                        <p><?php echo $menu['harga']; ?></p>
+                        <p>Rp <?php echo $menu['harga']; ?></p>
                         <div class="article-cta">
                           <a href="list_menu.php" class="btn btn-primary">Read More</a>
                         </div>

@@ -80,6 +80,10 @@ if (isset($_GET['id'])) {
                         <br>
                         <img src="<?php echo $menuData['foto']; ?>" alt="" style="width: 300px; height: auto;">
                     </div>
+                    <div class="form-group">
+                        <label for="stok">Stok Makanan:</label>
+                        <input type="text" class="form-control" value="<?php echo $menuData['stok_makanan']; ?>" readonly>
+                    </div>
                     <a href="list_menu.php" class="btn btn-secondary">Kembali</a>
                 </form>
             </div>

@@ -148,11 +148,11 @@ if (isset($_GET['hapus'])) {
                           <td><?php echo $nomorUrut; ?></td>
                           <td><?php echo $pecah['nama_pelanggan']; ?></td>
                           <td><?php echo $pecah['tanggal_pembelian']; ?></td>
-                          <td><?php echo $pecah['total_pembayaran']; ?></td>
+                          <td>Rp <?php echo number_format($pecah['total_pembayaran'], 0, ',', '.'); ?></td>
                           <td><?php echo $pecah['metode_pembayaran']; ?></td>
                           <td><?php echo $pecah['tanggal_pembayaran']; ?></td>
                           <td><a href="edit_pembayaran.php?id=<?php echo $pecah['id_pembayaran']; ?>" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_pembayaran']; ?>" class="btn-danger btn">Hapus</a></td>
+                          <a href="?hapus=<?php echo $pecah['id_pembayaran']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
                         </tr>
                         <?php 
                         $nomorUrut++;

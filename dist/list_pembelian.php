@@ -135,6 +135,7 @@ if (isset($_GET['hapus'])) {
                           <th>Nama Pelanggan</th>
                           <th>Tanggal Pembelian</th>
                           <th>Total Pembelian</th>
+                          <th>Total Harga</th>
                           <th>Action</th>
                         </tr>
                         <?php $ambil = $conn->query("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan");
@@ -146,9 +147,10 @@ if (isset($_GET['hapus'])) {
                           <td><?php echo $pecah['nama_pelanggan']; ?></td>
                           <td><?php echo $pecah['tanggal_pembelian']; ?></td>
                           <td><?php echo $pecah['total_pembelian']; ?></td>
+                          <td><?php echo $pecah['total_pembelian']; ?></td>
                           <td>
                           <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn">Hapus</a></td>
+                          <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
                         </tr>
                         <?php 
                          $nomorUrut++;
