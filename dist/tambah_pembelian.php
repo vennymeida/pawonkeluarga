@@ -10,31 +10,48 @@ if (isset($_POST['submit'])) {
   $totalPembelian = $_POST['total_pembelian'];
   $totalHarga = $_POST['total_harga'];
 
-  // Query untuk menyimpan data ke tabel pembelian
-  $query = "INSERT INTO pembelian (id_pelanggan,id_menu, tanggal_pembelian, total_pembelian, total_harga) 
-            VALUES ('$idPelanggan', '$idMenu', '$tanggalPembelian', '$totalPembelian', '$totalHarga')";
-  $result = $conn->query($query);
+  // Query untuk mendapatkan stok menu
+  $queryStokMenu = "SELECT stok_makanan FROM menu WHERE id_menu = '$idMenu'";
+  $resultStokMenu = $conn->query($queryStokMenu);
 
-  if ($result) {
-    // Mengurangi stok pada tabel menu
-    $queryStokMenu = "SELECT stok_makanan FROM menu WHERE id_menu = '$idMenu'";
-    $resultStokMenu = $conn->query($queryStokMenu);
+  if ($resultStokMenu->num_rows > 0) {
     $rowStokMenu = $resultStokMenu->fetch_assoc();
     $stokMenu = $rowStokMenu['stok_makanan'];
 
-    $stokMenuBaru = $stokMenu - $totalPembelian;
+    if ($totalPembelian <= $stokMenu) {
+      // Query untuk menyimpan data ke tabel pembelian
+      $query = "INSERT INTO pembelian (id_pelanggan, id_menu, tanggal_pembelian, total_pembelian, total_harga) 
+                VALUES ('$idPelanggan', '$idMenu', '$tanggalPembelian', '$totalPembelian', '$totalHarga')";
+      $result = $conn->query($query);
 
-    $queryUpdateStokMenu = "UPDATE menu SET stok_makanan = '$stokMenuBaru' WHERE id_menu = '$idMenu'";
-    $resultUpdateStokMenu = $conn->query($queryUpdateStokMenu);
+      if ($result) {
+        // Mengurangi stok pada tabel menu
+        $stokMenuBaru = $stokMenu - $totalPembelian;
 
-    // Data berhasil disimpan, lakukan redirect atau tampilkan pesan sukses
-    $_SESSION['create_status'] = 'success';
-    $success_message = "Data berhasil ditambahkan.";
-    // header("Location: list_pembelian.php");
-    // exit;
+        $queryUpdateStokMenu = "UPDATE menu SET stok_makanan = '$stokMenuBaru' WHERE id_menu = '$idMenu'";
+        $resultUpdateStokMenu = $conn->query($queryUpdateStokMenu);
+
+        if ($resultUpdateStokMenu) {
+          // Data berhasil disimpan dan stok makanan diperbarui, lakukan redirect atau tampilkan pesan sukses
+          $_SESSION['create_status'] = 'success';
+          $success_message = "Data berhasil ditambahkan.";
+          // header("Location: list_pembelian.php");
+          // exit;
+        } else {
+          // Terjadi kesalahan saat mengupdate stok makanan, tampilkan pesan error
+          $error = "Terjadi kesalahan saat mengupdate stok makanan. Silakan coba lagi.";
+        }
+      } else {
+        // Terjadi kesalahan saat menyimpan data, tampilkan pesan error
+        $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
+      }
+    } else {
+      // Jumlah pembelian melebihi stok makanan yang tersedia, tampilkan pesan error
+      $error = "Jumlah pembelian melebihi stok makanan yang tersedia.";
+    }
   } else {
-    // Terjadi kesalahan saat menyimpan data, tampilkan pesan error
-    $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
+    // Stok makanan tidak ditemukan, tampilkan pesan error
+    $error = "Stok makanan tidak ditemukan. Silakan coba lagi.";
   }
 }
 
@@ -42,9 +59,10 @@ if (isset($_POST['submit'])) {
 $queryPelanggan = "SELECT * FROM pelanggan";
 $resultPelanggan = $conn->query($queryPelanggan);
 
-// Query untuk mendapatkan daftar pelanggan
+// Query untuk mendapatkan daftar menu
 $queryMenu = "SELECT * FROM menu";
 $resultMenu = $conn->query($queryMenu);
+
 ?>
 
 <!DOCTYPE html>
@@ -143,7 +161,7 @@ $resultMenu = $conn->query($queryMenu);
               <div class="row">
                 <div class="col-6 offset-3">
                   <div class="section-header">
-                    <h1 class="text-center mb-4">Tambah Admin</h1>
+                    <h1 class="text-center mb-4">Tambah list_pembelian</h1>
                   </div>
                   <?php if (isset($error)) { ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -169,11 +187,6 @@ $resultMenu = $conn->query($queryMenu);
                   <div class="card">
                     <form method="POST" action="">
                       <div class="card-body">
-                        <?php if (isset($error)) { ?>
-                          <div class="alert alert-danger" role="alert">
-                            <?php echo $error; ?>
-                          </div>
-                        <?php } ?>
                         <form method="POST" action="">
                           <div class="form-group">
                             <label for="id_pelanggan">Pelanggan</label>

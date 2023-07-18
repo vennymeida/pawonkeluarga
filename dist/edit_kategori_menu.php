@@ -14,7 +14,7 @@ if (isset($_POST['simpan_data'])) {
 
     // Proses update data pelanggan ke database
     $update = $conn->query("UPDATE kategori_menu SET
-                            nama_kategori = '$namaPelanggan',
+                            nama_kategori = '$namaKategori',
                             deskripsi = '$deskripsi'
                             WHERE id_kategori_menu = $idKategori");
 

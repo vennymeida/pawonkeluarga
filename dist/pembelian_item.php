@@ -152,7 +152,7 @@ if (isset($_GET['hapus'])) {
           <td><?php echo $pecah['tanggal_pembelian']; ?></td>
           <td><?php echo $pecah['nama_menu']; ?></td>
           <td><?php echo $pecah['total_pembelian']; ?></td>
-          <td><?php echo $pecah['total_harga']; ?></td>
+          <td>Rp <?php echo number_format($pecah['total_harga'], 0, ',', '.'); ?></td>
         </tr>
         <?php
         $nomorUrut++;

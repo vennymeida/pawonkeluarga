@@ -166,12 +166,12 @@ if (isset($_GET['hapus'])) {
                             <td><?php echo $pecah['nama_pelanggan']; ?></td>
                             <td><?php echo $pecah['tanggal_pembelian']; ?></td>
                             <td><?php echo $pecah['nama_menu']; ?></td>
-                            <td><?php echo $pecah['harga']; ?></td>
+                            <td>Rp <?php echo number_format($pecah['harga'], 0, ',', '.'); ?></td>
                             <td><?php echo $pecah['total_pembelian']; ?></td>
-                            <td><?php echo $pecah['total_harga'] ?></td>
+                            <td>Rp <?php echo number_format($pecah['total_harga'], 0, ',', '.'); ?></td>
                             <td>
-                              <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning">Edit</a>
-                              <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
+                              <a href="edit_pembelian.php?id=<?php echo $pecah['id_pembelian']; ?>" class="btn btn-warning m-1">Edit</a>
+                              <a href="?hapus=<?php echo $pecah['id_pembelian']; ?>" class="btn-danger btn m-1" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a>
                             </td>
                           </tr>
                         <?php

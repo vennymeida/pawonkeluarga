@@ -134,7 +134,7 @@ if (isset($_GET['hapus'])) {
                         <tr>
                           <th>#</th>
                           <th>Username</th>
-                          <th>Password</th>
+                
                           <th>Nama Admin</th>
                           <th>Action</th>
                         </tr>
@@ -144,7 +144,7 @@ if (isset($_GET['hapus'])) {
                         <tr>
                           <td><?php echo $nomorUrut; ?></td>
                           <td><?php echo $pecah['username']; ?></td>
-                          <td><?php echo md5($pecah['password']); ?></td>
+                  
                           <td><?php echo $pecah['nama_admin']; ?></td>
                           <td><a href="edit_admin.php?id=<?php echo $pecah['id_admin']; ?>" class="btn btn-warning">Edit</a>
                           <a href="?hapus=<?php echo $pecah['id_admin']; ?>" class="btn-danger btn"onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>

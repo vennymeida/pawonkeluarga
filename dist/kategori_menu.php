@@ -172,8 +172,8 @@ if (isset($_GET['hapus'])) {
                           <td><?php echo $nomorUrut;?></td>
                           <td><?php echo $pecah['nama_kategori']; ?></td>
                           <td><?php echo $pecah['deskripsi']; ?></td>
-                          <td><a href="edit_kategori_menu.php?id=<?php echo $pecah['id_kategori_menu']; ?>" class="btn btn-warning">Edit</a>
-                          <a href="?hapus=<?php echo $pecah['id_kategori_menu']; ?>" class="btn-danger btn" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
+                          <td><a href="edit_kategori_menu.php?id=<?php echo $pecah['id_kategori_menu']; ?>" class="btn btn-warning m-1">Edit</a>
+                          <a href="?hapus=<?php echo $pecah['id_kategori_menu']; ?>" class="btn-danger btn m-1" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</a></td>
                         </tr>
                         <?php 
                          $nomorUrut++;

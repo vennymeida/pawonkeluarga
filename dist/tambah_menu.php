@@ -10,8 +10,10 @@ if (isset($_POST['simpan_data'])) {
     $harga = $_POST['harga'];
     if (isset($_FILES['foto'])) {
         $foto = $_FILES['foto']['name'];
-        $target_dir = "assets/img"; 
-        $target_file = $target_dir . basename($foto);
+        $foto_extension = pathinfo($foto, PATHINFO_EXTENSION);
+        $foto_name = uniqid() . '.' . $foto_extension; // Nama file menjadi random
+        $target_dir = "assets"; 
+        $target_file = $target_dir . '/' . $foto_name;
 
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
             $tambah = $conn->query("INSERT INTO menu (id_kategori_menu, nama_menu, harga, foto, stok_makanan) VALUES ('$kategori','$nama_menu', '$harga', '$target_file', '$stok')");
@@ -32,8 +34,8 @@ if (isset($_POST['simpan_data'])) {
     }
     $stok = $_POST['stok_makanan'];
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

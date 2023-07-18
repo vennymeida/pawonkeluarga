@@ -122,12 +122,11 @@ if (isset($_GET['id'])) {
       <section class="section">
         <div class="section-body">
           <div class="row">
-            <div class="col-6">
-              <div class="card">
-               <div class="card-body d-flex justify-content-center">
+          <div class="col-6 offset-3">
+            <div class="section-header">
+              <h1 class="text-center mb-4">Detail Menu</h1></div>
                 <form>
                     <div class="text-center">
-                    <h1>Detail Menu</h1>
                     <div class="form-group">
                         <label for="kategori">Kategori:</label>
                         <input type="text" class="form-control" value="<?php echo $menuData['id_kategori_menu']; ?>" readonly>

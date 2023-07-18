@@ -14,8 +14,11 @@ if (isset($_POST['simpan_data'])) {
     // Check if a new file is uploaded
     if ($_FILES['foto']['name'] !== '') {
         $foto = $_FILES['foto']['name'];
-        $target_dir = "assets/img";
-        $target_file = $target_dir . basename($foto);
+        $foto_extension = pathinfo($foto, PATHINFO_EXTENSION);
+        $foto_name = uniqid() . '.' . $foto_extension; // Nama file menjadi random
+        $target_dir = "assets";
+        $target_file = $target_dir . '/' . $foto_name;
+
         // Hapus file foto lama jika ada
         $query = "SELECT foto FROM menu WHERE id_menu = $id_menu";
         $result = $conn->query($query);
@@ -23,25 +26,25 @@ if (isset($_POST['simpan_data'])) {
         $oldFoto = $row['foto'];
         if (!empty($oldFoto) && file_exists($oldFoto)) {
             unlink($oldFoto);
-          }
+        }
 
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)) {
-            $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga', foto = '$target_file',stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
+            $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga', foto = '$target_file', stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
 
             if ($update) {
-              $_SESSION['create_status'] = 'success';
-              $success_message = "Data berhasil diupdate.";
+                $_SESSION['create_status'] = 'success';
+                $success_message = "Data berhasil diupdate.";
                 // header("Location: list_menu.php");
                 // exit;
             } else {
-                $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi."  .  $conn->error;
+                $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi." . $conn->error;
             }
         } else {
             $error = "Gagal meng-upload foto.";
         }
     } else {
         // If no new file is uploaded, update the data without changing the existing foto
-        $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga',stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
+        $update = $conn->query("UPDATE menu SET id_kategori_menu = '$kategori', nama_menu = '$nama_menu', harga = '$harga', stok_makanan = '$stok'  WHERE id_menu = '$id_menu'");
 
         if ($update) {
             header("Location: list_menu.php");
@@ -63,6 +66,7 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
