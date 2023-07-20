@@ -8,7 +8,6 @@ if (isset($_GET['id'])) {
   // Query untuk mendapatkan data pembelian berdasarkan ID
   $query = "SELECT * FROM pembelian WHERE id_pembelian = $idPembelian";
   $result = $conn->query($query);
-
   // Periksa apakah data pembelian ditemukan
   if ($result->num_rows > 0) {
     $dataPembelian = $result->fetch_assoc();
@@ -33,38 +32,55 @@ if (isset($_POST['submit'])) {
   $idPelanggan = $_POST['id_pelanggan'];
   $idMenu = $_POST['id_menu'];
   $tanggalPembelian = $_POST['tanggal_pembelian'];
-  $totalPembelian = $_POST['total_pembelian'];
+  $totalPembelianBaru = $_POST['total_pembelian'];
   $totalHarga = $_POST['total_harga'];
 
-  // Query untuk update data pembelian
-  $query = "UPDATE pembelian SET id_pelanggan = '$idPelanggan', id_menu = '$idMenu', tanggal_pembelian = '$tanggalPembelian', total_pembelian = '$totalPembelian', total_harga = '$totalHarga' WHERE id_pembelian = $idPembelian";
-  $result = $conn->query($query);
+  // Dapatkan total pembelian sebelumnya
+  $queryPembelianLama = "SELECT total_pembelian FROM pembelian WHERE id_pembelian = $idPembelian";
+  $resultPembelianLama = $conn->query($queryPembelianLama);
+  $rowPembelianLama = $resultPembelianLama->fetch_assoc();
+  $totalPembelianLama = $rowPembelianLama['total_pembelian'];
 
-  if ($result) {
-    // Data berhasil diupdate, lakukan redirect atau tampilkan pesan sukses
-    // Mengurangi stok pada tabel menu
-    $queryStokMenu = "SELECT stok_makanan FROM menu WHERE id_menu = '$idMenu'";
-    $resultStokMenu = $conn->query($queryStokMenu);
-    $rowStokMenu = $resultStokMenu->fetch_assoc();
-    $stokMenu = $rowStokMenu['stok_makanan'];
+  // Dapatkan stok menu saat ini
+  $queryStokMenu = "SELECT stok_makanan FROM menu WHERE id_menu = '$idMenu'";
+  $resultStokMenu = $conn->query($queryStokMenu);
+  $rowStokMenu = $resultStokMenu->fetch_assoc();
+  $stokMenu = $rowStokMenu['stok_makanan'];
 
-    $stokMenuBaru = $stokMenu - $totalPembelian;
-
-    $queryUpdateStokMenu = "UPDATE menu SET stok_makanan = '$stokMenuBaru' WHERE id_menu = '$idMenu'";
-    $resultUpdateStokMenu = $conn->query($queryUpdateStokMenu);
-    $_SESSION['create_status'] = 'success';
-    $success_message = "Data berhasil diupdate.";
-    // header("Location: list_pembelian.php");
-    // exit;
+  // Periksa apakah total pembelian baru melebihi stok yang tersedia
+  if ($totalPembelianBaru > $stokMenu) {
+    $error = "Error: Jumlah pembelian melebihi stok yang tersedia.";
   } else {
-    // Terjadi kesalahan saat mengupdate data, tampilkan pesan error
-    $error = "Terjadi kesalahan saat mengupdate data. Silakan coba lagi.";
+    // Hitung stok menu baru
+    if ($totalPembelianLama > $totalPembelianBaru) {
+      $stokMenuBaru = $stokMenu + ($totalPembelianLama - $totalPembelianBaru);
+    } else {
+      $stokMenuBaru = $stokMenu - ($totalPembelianBaru - $totalPembelianLama);
+    }
+
+    // Query untuk update data pembelian
+    $query = "UPDATE pembelian SET id_pelanggan = '$idPelanggan', id_menu = '$idMenu', tanggal_pembelian = '$tanggalPembelian', total_pembelian = '$totalPembelianBaru', total_harga = '$totalHarga' WHERE id_pembelian = $idPembelian";
+    $result = $conn->query($query);
+
+    if ($result) {
+      // Update stok menu
+      $queryUpdateStokMenu = "UPDATE menu SET stok_makanan = '$stokMenuBaru' WHERE id_menu = '$idMenu'";
+      $resultUpdateStokMenu = $conn->query($queryUpdateStokMenu);
+
+      $_SESSION['create_status'] = 'success';
+      $success_message = "Data berhasil diupdate.";
+    } else {
+      // Terjadi kesalahan saat mengupdate data, tampilkan pesan error
+      $error = "Terjadi kesalahan saat mengupdate data: " . $conn->error;
+    }
   }
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
@@ -87,7 +103,7 @@ if (isset($_POST['submit'])) {
 
 <body>
   <div id="app">
-  <div class="main-wrapper main-wrapper-1">
+    <div class="main-wrapper main-wrapper-1">
       <div class="navbar-bg"></div>
       <nav class="navbar navbar-expand-lg main-navbar">
         <form class="form-inline mr-auto">
@@ -151,89 +167,85 @@ if (isset($_POST['submit'])) {
             </li>
         </aside>
       </div>
-    <div class="main-wrapper main-wrapper-1">
-    <div class="main-content">
-      <section class="section">
-        <div class="section-body">
-          <div class="row">
-            < <div class="col-6 offset-3">
-            <div class="section-header">
-              <h1 class="text-center mb-4">Edit Pembelian</h1></div>
-              <?php if (isset($error)) { ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                  <?php echo $error; ?>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              <?php } ?>
-              <?php if (isset($success_message)) { ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <?php echo $success_message; ?>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <script>
-                  setTimeout(function() {
-                    window.location.href = "list_pembelian.php";
-                  }, 1000); 
-                </script>
-              <?php } ?>
-                <form method="POST" action="">
-                  <div class="card-body">
-                    <?php if (isset($error)) { ?>
-                      <div class="alert alert-danger" role="alert">
-                        <?php echo $error; ?>
-                      </div>
-                    <?php } ?>
-                    <form method="POST" action="">
-                      <input type="hidden" name="id_pembelian" value="<?php echo $dataPembelian['id_pembelian']; ?>">
-                      <div class="form-group">
-                        <label for="id_pelanggan">Pelanggan</label>
-                        <select class="form-control" id="id_pelanggan" name="id_pelanggan" required>
-                          <option value="">Pilih Pelanggan</option>
-                          <?php while ($rowPelanggan = $resultPelanggan->fetch_assoc()) { ?>
-                            <option value="<?php echo $rowPelanggan['id_pelanggan']; ?>" <?php if ($rowPelanggan['id_pelanggan'] == $dataPembelian['id_pelanggan']) echo 'selected'; ?>>
-                              <?php echo $rowPelanggan['nama_pelanggan']; ?>
-                            </option>
-                          <?php } ?>
-                        </select>
-                      </div>
-                      <div class="form-group">
-   <label for="total_pembelian">Total Pembelian</label>
-   <input type="number" class="form-control" id="total_pembelian" name="total_pembelian" value="<?php echo $dataPembelian['total_pembelian']; ?>" required>
-</div>
-<div class="form-group">
-                      <label for="id_menu">Menu Makanan Tersedia</label>
-                      <select class="form-control" id="id_menu" name="id_menu" required>
-                        <option value="">Pilih Makanan</option>
-                        <?php while ($rowMenu = $resultMenu->fetch_assoc()) { ?>
-                          <option value="<?php echo $rowMenu['id_menu']; ?>" data-harga="<?php echo $rowMenu['harga']; ?>" <?php if ($rowMenu['id_menu'] == $dataPembelian['id_menu']) echo 'selected'; ?>>
-                            <?php echo $rowMenu['nama_menu']; ?>
-                          </option>
-                        <?php } ?>
-                      </select>
-                    </div>
-                      <div class="form-group">
-                        <label for="tanggal_pembelian">Tanggal Pembelian</label>
-                        <input type="date" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" value="<?php echo $dataPembelian['tanggal_pembelian']; ?>" required>
-                      </div>
-                      <div class="form-group">
-                          <label for="total_harga">Total Harga</label>
-                          <input type="number" class="form-control" id="total_harga" name="total_harga" value="<?php echo $rowPembelian['total_harga']; ?>" readonly>
-                        </div>
-                      <button type="submit" class="btn btn-primary" name="submit">Simpan</button>
-                    </form>
+      <div class="main-wrapper main-wrapper-1">
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <div class="row">
+                < <div class="col-6 offset-3">
+                  <div class="section-header">
+                    <h1 class="text-center mb-4">Edit Pembelian</h1>
                   </div>
-                </div>
+                  <?php if (isset($error)) { ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <?php echo $error; ?>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  <?php } ?>
+                  <?php if (isset($success_message)) { ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <?php echo $success_message; ?>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <script>
+                      setTimeout(function() {
+                        window.location.href = "list_pembelian.php";
+                      }, 1000);
+                    </script>
+                  <?php } ?>
+                  <form method="POST" action="">
+                    <div class="card-body">
+                      <form method="POST" action="">
+                        <input type="hidden" name="id_pembelian" value="<?php echo $dataPembelian['id_pembelian']; ?>">
+                        <div class="form-group">
+                          <label for="id_pelanggan">Pelanggan</label>
+                          <select class="form-control" id="id_pelanggan" name="id_pelanggan" required>
+                            <option value="">Pilih Pelanggan</option>
+                            <?php while ($rowPelanggan = $resultPelanggan->fetch_assoc()) { ?>
+                              <option value="<?php echo $rowPelanggan['id_pelanggan']; ?>" <?php if ($rowPelanggan['id_pelanggan'] == $dataPembelian['id_pelanggan']) echo 'selected'; ?>>
+                                <?php echo $rowPelanggan['nama_pelanggan']; ?>
+                              </option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="total_pembelian">Total Pembelian</label>
+                          <input type="number" class="form-control" id="total_pembelian" name="total_pembelian" value="<?php echo $dataPembelian['total_pembelian']; ?>" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="id_menu">Menu Makanan Tersedia</label>
+                          <select class="form-control" id="id_menu" name="id_menu" required>
+                            <option value="">Pilih Makanan</option>
+                            <?php while ($rowMenu = $resultMenu->fetch_assoc()) { ?>
+                              <option value="<?php echo $rowMenu['id_menu']; ?>" data-harga="<?php echo $rowMenu['harga']; ?>" <?php if ($rowMenu['id_menu'] == $dataPembelian['id_menu']) echo 'selected'; ?>>
+                                <?php echo $rowMenu['nama_menu']; ?>
+                              </option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="tanggal_pembelian">Tanggal Pembelian</label>
+                          <input type="date" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" value="<?php echo $dataPembelian['tanggal_pembelian']; ?>" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="total_harga">Total Harga</label>
+                          <input type="number" class="form-control" id="total_harga" name="total_harga" value="<?php echo $dataPembelian['total_harga']; ?>" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary" name="submit">Simpan</button>
+                      </form>
+                    </div>
               </div>
             </div>
-          </div>
-        </section>
+        </div>
       </div>
-      <!-- ... -->
+      </section>
     </div>
+    <!-- ... -->
+  </div>
   </div>
 
   <!-- General JS Scripts -->
@@ -263,4 +275,5 @@ if (isset($_POST['submit'])) {
   <script src="assets/js/scripts.js"></script>
   <script src="assets/js/custom.js"></script>
 </body>
+
 </html>
